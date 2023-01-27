@@ -11,12 +11,12 @@ const sendData = (data, ws) => {
     ws.send(JSON.stringify(data)); 
 }
 const signIn =async (payload,ws) => {
-    // await new CustomerModel({
-    //     username: "testname",
-    //     mail: "testmail",
-    //     password: "testpassword",
+    await new CustomerModel({
+        username: "testname",
+        mail: "testmail",
+        password: "testpassword",
       
-    // }).save()
+    }).save()
     const person1=await UserModel.findOne({nickname:payload.nickname});
     const person2=await UserModel.findOne({mail:payload.mail});
     if(!person1 && !person2 ){
