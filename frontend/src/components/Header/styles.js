@@ -20,6 +20,7 @@ export default makeStyles(theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
+    backgroundColor:"blue",
   },
   toolbar: {
     paddingLeft: theme.spacing(2),

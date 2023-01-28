@@ -17,6 +17,10 @@ import Sidebar from "../Sidebar";
 import Dashboard from "../../pages/dashboard";
 import CreatePost from "../../pages/createPost/createPost"
 import Notifications from "../../pages/notifications";
+import insertPOS from "../../pages/insertPOS/insertPOS";
+import purchase from "../../pages/purchase/purchase";
+import modifyItem from "../../pages/modifyItem/modifyItem";
+import modifyProduct from "../../pages/modifyProduct/modifyProduct";
 // context
 import { useLayoutState } from "../../context/LayoutContext";
 
@@ -39,7 +43,11 @@ function Layout(props) {
             <div className={classes.fakeToolbar} />
             <Switch>
               <Route path="/app/dashboard" component={Dashboard} />
-              <Route path="/app/createPost" component={CreatePost} />
+              {/* <Route path="/app/createPost" component={CreatePost} /> */}
+              <Route path="/app/insertpos" component={insertPOS} />
+              <Route path="/app/purchase" component={purchase} />
+              <Route path="/app/modifyitem" component={modifyItem} />
+              <Route path="/app/modifyproduct" component={modifyProduct} />
               <Route path="/app/post/:post_id" component={Notifications}  />
               
             </Switch>

@@ -127,7 +127,7 @@ export default function Header(props) {
           )}
         </IconButton>
         <Typography variant="h6" weight="medium" className={classes.logotype}>
-          吵架論壇
+          智慧小刀
         </Typography>
         <div className={classes.grow} />
         <IconButton

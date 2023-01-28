@@ -26,7 +26,14 @@ import { useChat } from "../../context/OurContext";
 
 const structure = [
   { id: 0, label: "Dashboard", link: "/app/dashboard", icon: <HomeIcon /> },
-  { id: 15, label: "Create New Post", link: "/app/createPost", icon: <EditOutlinedIcon/>},
+  // { id: 15, label: "Create New Post", link: "/app/createPost", icon: <EditOutlinedIcon/>},
+  { id: 16, label: "insertPOS", link: "/app/insertpos", icon: <EditOutlinedIcon/>},
+  { id: 17, label: "purchase", link: "/app/purchase", icon: <EditOutlinedIcon/>},
+  { id: 18, label: "modifyitem", link: "/app/modifyitem", icon: <EditOutlinedIcon/>},
+  { id: 19, label: "modifyproduct", link: "/app/modifyproduct", icon: <EditOutlinedIcon/>},
+
+
+  
 ];
 
 function Sidebar({ location }) {
