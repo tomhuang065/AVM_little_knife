@@ -3,10 +3,15 @@ import PageTitle from "../../components/PageTitle/PageTitle";
 import { useState,useEffect } from "react";
 import { useChat } from "../../context/OurContext";
 import { useHistory } from "react-router-dom"
+import { DesktopDatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 export default function CreatePost () {
 
     const history = useHistory();
+    var [sort, setSort] = useState(false); 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [hashtag, setHashtag] = useState('#');
@@ -26,6 +31,13 @@ export default function CreatePost () {
     //         setJumpDash(false);
     //     }
     // }, [jumpDash]);
+    const date = new Date();
+    console.log(date)
+    const [value, setValue] = useState(dayjs(date));
+
+    const handleChange = (newValue) => {
+        setValue(newValue);
+    };
 
     const openMenu = (event) => {
         setAnchor(event.currentTarget);
@@ -78,54 +90,74 @@ export default function CreatePost () {
                 reject(error);
             }
         })
+    };
+
+    const checkclick = () =>{
+        setSort(!sort)
+        console.log("clicked")
+        console.log(sort)
     }
     return (
         // <Box>abcd</Box>
         <>
-            <PageTitle title="上傳POS機資料"/>
-            <Paper>
+            <PageTitle title="上傳POS機資料" 
+                button={
+                    <div>
+                        <Button
+                        onClick={()=>{checkclick()}}
+                        variant="contained"
+                        // size="large"
+                        variant="outlined" 
+                        // sx={{ width: 200, padding: 1, margin: 2 }}
+                        color="secondary"
+                        style = {{backgroundColor : "purple",marginRight:"10%", width:"100px", color :"white", height:"50px" ,borderRadius:"10px"}} 
+                        >
+                        {!sort?('手動輸入'):('檔案上傳')}
+                        </Button >
+                    </div>
+                }
+            />
+            {sort === true? 
+                <Paper >
+                    <Container sx={{bgcolor: '#edfcfa'}}>
+                        <Grid container spacing={4}>
+                            <Grid item xs={12}>
+                                <TextField inputProps={{maxLength:30}} fullWidth value={title} placeholder="Product name (originally : title) " onChange={e => setTitle(e.target.value)}/>                
+                            </Grid>
+                            <Grid item xs={12}>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DesktopDatePicker
+                                        label= "Date"
+                                        inputFormat="MM/DD/YYYY"
+                                        placeholder="date"
+                                        value={value}
+                                        onChange={handleChange}
+                                        renderInput={(params) => <TextField {...params} />}
+                                    />   
+                                </LocalizationProvider>          
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField fullWidth multiline value={content} placeholder="Amount " onChange={e => setContent(e.target.value)}/>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField fullWidth multiline value={content} placeholder="Description " onChange={e => setContent(e.target.value)}/>
+                            </Grid>
+                            <Grid item xs={12}>
+                                {/* onClick = {() => onSendCreatePost()} */}
+                                <Button style = {{marginBottom:"20px" , color:"blue"}} onClick={() => console.log("clicked")} >Submit</Button>
+                                <Typography variant="h5" sx={{color:"red"}}>
+                                    {errorMessage}
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    </Container>
+                </Paper>
+                :
+                <Paper>
                 <Container sx={{bgcolor: '#edfcfa'}}>
                     <Grid container spacing={4}>
                         <Grid item xs={12}>
-                            <TextField inputProps={{maxLength:30}} fullWidth value={title} placeholder="Title... " onChange={e => setTitle(e.target.value)}/>                
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField fullWidth multiline value={content} placeholder="Content... " onChange={e => setContent(e.target.value)}/>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField fullWidth inputProps={{maxLength:20}} value={hashtag} placeholder="#Hashtag... " onChange={e => setHashtag(e.target.value)}/>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Box>
-                                <Button
-                                    onClick={openMenu}
-                                    color="primary"
-                                    variant="contained"
-                                >
-                                {selected === -1?'Choose Theme':allTheme[selected]}
-                                </Button>
-
-                                <Menu
-                                    open={Boolean(anchor)}
-                                    anchorEl={anchor}
-                                    onClose={closeMenu}
-                                    keepMounted
-                                >
-                                    {allTheme.map((option, index) => (
-                                    <MenuItem
-                                        key={index}
-                                        onClick={(event) => onMenuItemClick(event, index)}
-                                        selected= {index === selected}
-                                    >
-                                        {option}
-                                    </MenuItem>
-                                    ))}
-                                </Menu>
-                            </Box>
-                        </Grid>
-
-                        <Grid item xs={12}>
-                            <div style ={{marginTop:"2%", marginBottom:"0.5%" ,color:"#838383" , fontFamily:"courier"}}>Please select one image here</div>
+                            <div style ={{marginTop:"2%", marginBottom:"0.5%" ,color:"#838383" , fontFamily:"courier"}}>Acceptable format : .xlsx or .csv</div>
                             {selectedImage && (
                                 <Box >
                                     
@@ -149,7 +181,8 @@ export default function CreatePost () {
 
 
                         <Grid item xs={12}>
-                            <Button onClick={ () => onSendCreatePost() }>Submit</Button>
+                            {/* onClick={ () => onSendCreatePost() } */}
+                            <Button style = {{marginBottom:"20px", color:"blue"}} onClick={()=>console.log("clicked")}>Submit</Button> 
                             <Typography variant="h5" sx={{color:"red"}}>
                                 {errorMessage}
                             </Typography>
@@ -161,6 +194,8 @@ export default function CreatePost () {
                     </Grid>
                 </Container>
             </Paper>
+            }
+            
         </>
         
     );

@@ -30,7 +30,7 @@ import {
 import { useChat } from "../../context/OurContext";
 
 const structure = [
-  { id: 0, label: "主頁", link: "/app/dashboard", icon: <HomeIcon /> },
+  { id: 0, label: "首頁", link: "/app/dashboard", icon: <HomeIcon /> },
   // { id: 15, label: "Create New Post", link: "/app/createPost", icon: <EditOutlinedIcon/>},
   { id: 16, label: "上傳POS機資料", link: "/app/insertpos", icon: <UploadIcon/>},
   { id: 17, label: "購入原料", link: "/app/purchase", icon: <ShoppingBagIcon/>},

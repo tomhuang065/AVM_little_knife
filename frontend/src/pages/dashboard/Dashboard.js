@@ -6,6 +6,9 @@ import {
   CircularProgress, 
   Chip,
   Stack,
+  Box,
+  Typography,
+  Paper,
 } from "@material-ui/core";
 
 // styles
@@ -35,78 +38,20 @@ export default function Dashboard (props) {
   // console.log("All theme", allTheme)
   return (
     <>
-      <PageTitle title={!sort?(`熱門話題`):(`最新話題`)} button={
-      <div>
-        <Button
-          onClick={()=>{setSort(!sort)}}
-          variant="contained"
-          size="medium"
-          color="secondary"
-          style = {{backgroundColor : "red",marginLeft:"10%"}} 
-    
-        >
-          {!sort?('最新'):('熱門')}
-        </Button >
-     </div>} />
-     <Grid style = {{marginLeft:"0%"}} >
-        <Chip label="*ALL*" onClick={()=>{setSelectTheme('')}} style = {{marginLeft:"3%", marginBottom :"2%"}} variant="outlined" clickable={true} color='secondary'  />
-        {allTheme.map(e => (
-          <Chip label={e} onClick={()=>{setSelectTheme(e)}} style = {{marginLeft:"3%", marginBottom :"2%"}} variant="outlined" clickable={true} color='primary'  />
-        ))}
-      {/* </Stack> */}
-      </Grid>
-      {!sort?(!DashPostsIsLoading||!cir?(
-        // hot post have top 3 + table 7
-        <Grid container spacing={1} >
-       {DashboardPosts.slice(0,3).map(stat => (
-          <Grid item md={4} sm={12} xs={12} key={uuidv4()}>
-            <Topthree {...stat} />
+      <PageTitle title="首頁"></PageTitle>
+      <Grid container  style = {{ width:"100%", backgroundColor:"#000000", height:"100%"}} >
+        <Paper elevation = {10} style = {{ width:"100%", backgroundColor:"#ffffff",  height:"100%"}}>
+          <Grid container spacing = {2}>
+            <Paper elevation = {5} style = {{marginTop:"50px" ,marginLeft:"50px",marginRight:"50px", width : "100%", height:"300px", backgroundColor:"#f5f5f5"}} >智慧小刀介紹</Paper>
           </Grid>
-        ))}
-        <Grid item xs={12} style={{height:'50px'}}>
-        </Grid>
-        {DashboardPosts.slice(3,show_number).map(stat => (
-          <Grid item xs={12} key={uuidv4()}>
-            <Table {...stat} />
+          <Grid container spacing = {2}>
+            <Paper elevation = {5} style = {{marginTop:"50px" ,marginLeft:"50px",marginRight:"50px", width : "100%", height:"300px", backgroundColor:"#f5f5f5"}} >使用說明</Paper>
           </Grid>
-        ))}
-      </Grid>
-      ):<></>
-      ):
-      //new posts only table 10
-      (!DashPostsIsLoading||!cir?(
-        <Grid container spacing={1}>
-        {DashboardPosts.slice(0,show_number).map(stat => (
-          <Grid item xs={12} key={uuidv4()}>
-            <Table {...stat} />
+          <Grid container spacing = {2}>
+            <Paper elevation = {5} style = {{marginTop:"50px" ,marginLeft:"50px",marginRight:"50px", width : "100%", height:"300px", backgroundColor:"#f5f5f5"}} >與我們聯絡</Paper>
           </Grid>
-        ))}
+        </Paper>
       </Grid>
-      ):<></>
-      )}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center", 
-          alignItems: "center",
-          
-        }}
-      >
-      {DashPostsIsLoading?
-        <CircularProgress size={100} />:
-        <Button
-        style={{
-          marginTop:"30px"
-        }}
-        variant="contained"
-        size="medium"
-        color="secondary"
-        onClick={()=>{sendGetDashboardPosts(sort,show_number,selectTheme,false);}}
-      >
-        查看更多
-      </Button >
-      }
-      </div> 
     </>
   );
 }
