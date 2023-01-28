@@ -3,9 +3,14 @@ import { Drawer, IconButton, List } from "@material-ui/core";
 import {
   Home as HomeIcon,
   ArrowBack as ArrowBackIcon,
-  EditOutlined as EditOutlinedIcon
+  EditOutlined as EditOutlinedIcon,
+  // Upload as UploadIcon,
   
 } from "@material-ui/icons";
+import UploadIcon from '@mui/icons-material/Upload';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import CategoryIcon from '@mui/icons-material/Category';
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import { useTheme } from "@material-ui/styles";
 import { withRouter } from "react-router-dom";
 import classNames from "classnames";
@@ -25,12 +30,12 @@ import {
 import { useChat } from "../../context/OurContext";
 
 const structure = [
-  { id: 0, label: "Dashboard", link: "/app/dashboard", icon: <HomeIcon /> },
+  { id: 0, label: "主頁", link: "/app/dashboard", icon: <HomeIcon /> },
   // { id: 15, label: "Create New Post", link: "/app/createPost", icon: <EditOutlinedIcon/>},
-  { id: 16, label: "insertPOS", link: "/app/insertpos", icon: <EditOutlinedIcon/>},
-  { id: 17, label: "purchase", link: "/app/purchase", icon: <EditOutlinedIcon/>},
-  { id: 18, label: "modifyitem", link: "/app/modifyitem", icon: <EditOutlinedIcon/>},
-  { id: 19, label: "modifyproduct", link: "/app/modifyproduct", icon: <EditOutlinedIcon/>},
+  { id: 16, label: "上傳POS機資料", link: "/app/insertpos", icon: <UploadIcon/>},
+  { id: 17, label: "購入原料", link: "/app/purchase", icon: <ShoppingBagIcon/>},
+  { id: 18, label: "變更原料資訊", link: "/app/modifyitem", icon: <CategoryIcon/>},
+  { id: 19, label: "變更產品資訊", link: "/app/modifyproduct", icon: <InventoryIcon/>},
 
 
   

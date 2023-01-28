@@ -82,7 +82,7 @@ export default function CreatePost () {
     return (
         // <Box>abcd</Box>
         <>
-            <PageTitle title="test"/>
+            <PageTitle title="購入原料"/>
             <Paper>
                 <Container sx={{bgcolor: '#edfcfa'}}>
                     <Grid container spacing={4}>
