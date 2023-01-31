@@ -3,6 +3,7 @@ import PostModel from './models/post.js';
 import CommentModel from './models/comment.js';
 import SubCommentModel from './models/subcomment.js';
 import CustomerModel from './models/AVMmodels/customer.js';
+import ItemModel from './models/AVMmodels/item.js';
 import mongoose, { get } from 'mongoose';
 import { compareSync } from 'bcryptjs';
 
@@ -11,12 +12,12 @@ const sendData = (data, ws) => {
     ws.send(JSON.stringify(data)); 
 }
 const signIn =async (payload,ws) => {
-    await new CustomerModel({
-        username: "testname",
-        mail: "testmail",
-        password: "testpassword",
+    // await new CustomerModel({
+    //     username: "testname",
+    //     mail: "testmail",
+    //     password: "testpassword",
       
-    }).save()
+    // }).save()
     const person1=await UserModel.findOne({nickname:payload.nickname});
     const person2=await UserModel.findOne({mail:payload.mail});
     if(!person1 && !person2 ){
@@ -86,13 +87,38 @@ const editLike =async (payload,ws) => {
     await user.save();
     sendData(['editLike',{Post:post,User:user}],ws);
 }
-const createPost = async (payload, ws) => {
+
+const createItem = async (payload, ws) => {
     // sendData(['createPost',{status:true}],ws);
-    const newPost = await new PostModel(payload);
+    console.log(payload)
+    const newItem = await new ItemModel(payload);
     // console.log("newPost: ", newPost);
     // sendData(['createPost',{status:true, newPostId: newPost.id}],ws);
-    await newPost.save();
+    await newItem.save();
     // if.. sendData..?
+}
+const updateItem = async (payload, ws) => {
+    // sendData(['createPost',{status:true}],ws);
+    console.log(payload)
+    const UpdateItem = await ItemModel.findOneAndUpdate(
+        {itemname:payload.itemname}, {$set:{itemname:payload.newname, price:payload.price, description:payload.description}}
+    );
+    // console.log("newPost: ", newPost);
+    // sendData(['createPost',{status:true, newPostId: newPost.id}],ws);
+    // await newItem.save();
+    // if.. sendData..?
+}
+const deleteItem = async (payload, ws) => {
+    // sendData(['createPost',{status:true}],ws);
+    console.log(payload)
+    const UpdateItem = await ItemModel.findOneAndDelete(
+        {itemname:payload}
+    );
+}
+const findItemName = async (ws) => {
+    const list = await ItemModel.find();
+    console.log(list)
+    sendData(['getItemName', {List:list}], ws)
 }
 const createComment = async (payload, ws,wss) => {
     const newComment = await new CommentModel(payload).save();
@@ -238,10 +264,27 @@ export default {
                     editLike(payload,ws);
                     break
                 }
-                case 'createPost': {
+                case 'createItem': {
                     // console.log("createpostdata",  payload);
-                    createPost(payload, ws);
+                    createItem(payload, ws);
                     break;
+                }
+                case 'updateItem': {
+                    // console.log("createpostdata",  payload);
+                    updateItem(payload, ws);
+                    break;
+                }
+                case 'deleteItem':{
+                    deleteItem(payload, ws);
+                    break;
+                }
+                case 'createItem': {
+                    // console.log("createpostdata",  payload);
+                    createItem(payload, ws);
+                    break;
+                }
+                case 'findItemName':{
+                    findItemName(ws);
                 }
                 case 'createComment':{
                     const Comments = await createComment(payload, ws,wss);

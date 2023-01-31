@@ -110,7 +110,7 @@ export default function CreatePost () {
                         variant="outlined" 
                         // sx={{ width: 200, padding: 1, margin: 2 }}
                         color="secondary"
-                        style = {{backgroundColor : "purple",marginRight:"10%", width:"100px", color :"white", height:"50px" ,borderRadius:"10px"}} 
+                        style = {{backgroundColor : "blue",marginRight:"10%", width:"100px", color :"white", height:"50px" ,borderRadius:"10px"}} 
                         >
                         {!sort?('手動輸入'):('檔案上傳')}
                         </Button >

@@ -21,6 +21,8 @@ import insertPOS from "../../pages/insertPOS/insertPOS";
 import purchase from "../../pages/purchase/purchase";
 import modifyItem from "../../pages/modifyItem/modifyItem";
 import modifyProduct from "../../pages/modifyProduct/modifyProduct";
+import stock from "../../pages/stock/stock";
+
 // context
 import { useLayoutState } from "../../context/LayoutContext";
 
@@ -47,8 +49,10 @@ function Layout(props) {
               <Route path="/app/insertpos" component={insertPOS} /> 
               <Route path="/app/purchase" component={purchase}/>
               <Route path="/app/modifyitem" component={modifyItem} />
+              <Route path="/app/stock" component={stock} />
               <Route path="/app/modifyproduct" component={modifyProduct} />
               <Route path="/app/post/:post_id" component={Notifications}  />
+              
               
             </Switch>
           </div>

@@ -22,10 +22,14 @@ const ChatContext = createContext({
     login:()=>{},
     isLoading:false,
     error:null,
-    sendCreatePost: ()=>{},
+    sendCreateItem: ()=>{},
+    sendDeleteItem:() => {},
+    sendUpdateItem: ()=>{},
+    sendFindItemName: () => {},
     sendCreateComment: ()=>{},
     sendCreateSubComment: ()=>{},
     // createPostData: {}
+    itemNames:{},
     person: {},
     sendGetDashboardPosts:() =>{},
     DashboardPosts: [],
@@ -67,6 +71,7 @@ const ChatProvider = (props) => {
     var [error, setError] = useState(null);
     var [password,setPassword] = useState('');
     const [person, setPerson] = useState({});
+    const [itemNames, setItemNames] = useState([]);
     const [DashboardPosts, setDashboardPosts] = useState([]);
     const [currentLocation, setCurrentLocation] = useState('');
     const [NotificationPost, setNotificationPost] = useState({});
@@ -98,8 +103,18 @@ const ChatProvider = (props) => {
     const editLike = (payload) => {
         sendData(['editLike',payload]);
     }
-    const sendCreatePost = (payload) => {
-        sendData(['createPost', payload ])
+    const sendCreateItem = (payload) => {
+        sendData(['createItem', payload ])
+    }
+    const sendDeleteItem = (payload) => {
+        sendData(['deleteItem', payload ])
+    }
+    const sendUpdateItem = (payload) => {
+        console.log(payload)
+        sendData(['updateItem', payload ])
+    }
+    const sendFindItemName = () =>{
+        sendData(['findItemName'])
     }
     const sendCreateComment = (payload) => {
         sendData(['createComment', payload ])
@@ -132,6 +147,10 @@ const ChatProvider = (props) => {
             }, 20000);
         }
         switch (task) {
+            case 'getItemName':{
+                console.log(payload.List)
+                setItemNames(payload.List)
+            }
             case "signInStatus": {
                 if(payload.status===true){
                     localStorage.setItem('id_token', 1)
@@ -231,7 +250,12 @@ const ChatProvider = (props) => {
                 isLoading,setIsLoading,
                 error,setError,
                 // createPostData, setCreatePostData
-                sendCreatePost, person,
+                person,
+                itemNames,
+                sendCreateItem,
+                sendUpdateItem,
+                sendDeleteItem,
+                sendFindItemName,
                 sendCreateComment,
                 sendCreateSubComment,
                 sendGetDashboardPosts,

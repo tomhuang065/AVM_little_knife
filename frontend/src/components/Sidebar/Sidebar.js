@@ -36,6 +36,8 @@ const structure = [
   { id: 17, label: "購入原料", link: "/app/purchase", icon: <ShoppingBagIcon/>},
   { id: 18, label: "變更原料資訊", link: "/app/modifyitem", icon: <CategoryIcon/>},
   { id: 19, label: "變更產品資訊", link: "/app/modifyproduct", icon: <InventoryIcon/>},
+  { id: 20, label: "庫存", link: "/app/stock", icon: <InventoryIcon/>},
+
 
 
   

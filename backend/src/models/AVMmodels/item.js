@@ -13,6 +13,9 @@ const ItemSchema = new mongoose.Schema({
 
     //description:
     description:{ type:String },
+
+    //newName : the updated name of the item
+    newname:{type:String}
 });
 
 const ItemModel = mongoose.model('Item', ItemSchema)
