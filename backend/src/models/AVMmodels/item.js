@@ -9,13 +9,16 @@ const ItemSchema = new mongoose.Schema({
     price:{ type:Number, required: true},
 
     //amount : the number ot the item left, initialized as zero
-    amount:{type:Number},
+    amount:{type:String},
 
     //description:
     description:{ type:String },
 
     //newName : the updated name of the item
-    newname:{type:String}
+    newname:{type:String},
+
+    //user: the user who create the post
+    user:{ type:String },
 });
 
 const ItemModel = mongoose.model('Item', ItemSchema)

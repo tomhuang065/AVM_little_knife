@@ -21,7 +21,11 @@ export default function CreatePost () {
     const [errorMessage, setErrorMessage] = useState('');
 
     const openMenu = (event) => {
-        sendFindItemName("FindItemName");
+        const payload = {
+            user:person.mail,
+        }
+        // console.log(payload)
+        sendFindItemName(payload);
         setAnchor(event.currentTarget);
     };
     const closeMenu = () => {
@@ -52,11 +56,13 @@ export default function CreatePost () {
             setErrorMessage("Item Price is missing");
             throw console.error("Item Price is missing");
         }
+        console.log(typeof(Number(itemPrice)))
         if(typeof(Number(itemPrice))!== 'number'){
             setErrorMessage("Item Price is not a number");
-            throw console.error("Item Price is not a number");
+            alert("Item Price is not a number");
         }
         const payload = {
+            user:person.mail,
             itemname :itemName,
             price: itemPrice,
             description: itemDescription,
@@ -84,6 +90,7 @@ export default function CreatePost () {
         console.log(itemPrice)
         console.log(itemDescription)
         const payload = {
+            user:person.mail,
             itemname : itemNames[selected].itemname,
             newname : itemName === ''?itemNames[selected].itemname:itemName,
             price: itemPrice === ''?itemNames[selected].price:itemPrice,
@@ -103,7 +110,10 @@ export default function CreatePost () {
         setItemName('')
         setItemPrice('')
         setItemDescription('')
-        sendFindItemName("FindItemName");
+        const payload = {
+            user:person.mail,
+        }
+        sendFindItemName(payload);
     }
 
     return (
@@ -125,7 +135,7 @@ export default function CreatePost () {
             />
             {renew? 
                 <Paper>
-                    <Container sx={{bgcolor: '#edfcfa'}}>
+                    <Container sx={{bgcolor: '#edfcfa'}} style={{width:"100%"}}>
                         <Grid container spacing={4}>
                             <Grid item xs={12}>
                                 <Box>
@@ -166,7 +176,7 @@ export default function CreatePost () {
                             </Grid>
                             <Grid item xs={12}>
                                 <Button style = {{marginBottom:"20px", backgroundColor:"blue", color:"white"}}onClick={ () => checkChoose() }>Submit</Button>
-                                <Button style = {{marginBottom:"20px", marginLeft:"20px", backgroundColor:"blue", color:"white"}}onClick={() => sendDeleteItem(itemNames[selected].itemname)}>Delete</Button>   
+                                <Button style = {{marginBottom:"20px", marginLeft:"20px", backgroundColor:"red", color:"white"}}onClick={() => sendDeleteItem(itemNames[selected].itemname)}>Delete</Button>   
                                 <Typography variant="h5" sx={{color:"red"}}>
                                     {errorMessage}
                                 </Typography>

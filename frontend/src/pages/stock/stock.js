@@ -82,7 +82,11 @@ export default function CreatePost () {
     }
     const showing = () => {
         setShow(!show)
-        sendFindItemName("FindItemName");
+        const payload = {
+            user:person.mail,
+        }
+        // console.log(payload)
+        sendFindItemName(payload);
         
     }
 

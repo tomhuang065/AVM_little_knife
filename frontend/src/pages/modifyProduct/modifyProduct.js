@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Paper, TextField, Menu, MenuItem, Container, Typography } from "@mui/material";
+import { Box, Button, Grid, Paper, TextField, Menu, MenuItem, Container, Typography,InputLabel,FormHelperText,FormControl,Select } from "@mui/material";
 import PageTitle from "../../components/PageTitle/PageTitle";
 import { useState,useEffect } from "react";
 import { useChat } from "../../context/OurContext";
@@ -8,26 +8,24 @@ export default function CreatePost () {
 
     const history = useHistory();
     const [title, setTitle] = useState('');
+    const [tmpItem, setTmpItem] = useState('');
+    const [tmpAmount, setTmpAmount] = useState(0);
+    const [itemList, setItemList] = useState([]);
+    const [amountList, setAmountList] = useState([]);
+    const [renew, setRenew] = useState(false)
+    const [itemName, setItemName] = useState('');
+    const [itemPrice, setItemPrice] = useState('');
+    const [itemDescription, setItemDescription] = useState('');
     const [content, setContent] = useState('');
     const [hashtag, setHashtag] = useState('#');
     const [anchor, setAnchor] = useState(null); //for menu
     const [selected, setSelected] = useState(-1); //selected index
     const [selectedImage, setSelectedImage] = useState(null);
-    const {sendCreatePost, person, allTheme, jumpDash, setJumpDash, jumpPostId} = useChat();
+    const {sendCreatePost, sendCreateItem, sendUpdateItem, sendDeleteItem, sendFindItemName, itemNames, person, allTheme, jumpDash, setJumpDash, jumpPostId} = useChat();
     const [errorMessage, setErrorMessage] = useState('');
-    // const allTheme = [
-    //     'Feelings', 'Politics', 'DailyLife'
-    // ]
-    console.log("in createpost")
-    // useEffect(() => {
-    //     if(jumpDash === true){
-    //         // history.push('/app/post/'+jumpPostId);
-    //         history.push('/app/dashboard');
-    //         setJumpDash(false);
-    //     }
-    // }, [jumpDash]);
 
     const openMenu = (event) => {
+        sendFindItemName("FindItemName");
         setAnchor(event.currentTarget);
     };
     const closeMenu = () => {
@@ -36,132 +34,238 @@ export default function CreatePost () {
     const onMenuItemClick = (event, index) => {
         setAnchor(null);
         setSelected(index);
+        // setItemName(itemNames[selected].itemname)
+        // setItemPrice(itemNames[selected].price)
+        // setItemDescription(itemNames[selected].description)
+
     }
-    const onSendCreatePost = async () => {
-        console.log("person: ",person._id);
-        if(!title || !content || selected === -1 ){
-            setErrorMessage("Some field missing");
-            throw console.error("Some field missing");
+    const checkChoose = () =>{
+        if(selected !== -1){
+            onSendUpdateItem();
         }
-        const base64 = selectedImage? await convertToBase64(selectedImage) : '';
-        console.log("img base64: ", base64);
+        else {
+            alert("Item not chosen")
+        }
+    }
+    const onSendCreateItem = async () => {
+        console.log(amountList)
+        console.log(itemList)
+        if(!itemName === -1 ){
+            setErrorMessage("Item name is missing");
+            throw console.error("Item name is missing");
+        }
+        if(!itemPrice === -1 ){
+            setErrorMessage("Item Price is missing");
+            throw console.error("Item Price is missing");
+        }
+        console.log(typeof(Number(itemPrice)))
+        if(typeof(Number(itemPrice))!== 'number'){
+            setErrorMessage("Item Price is not a number");
+            alert("Item Price is not a number");
+        }
         const payload = {
-            poster: person._id,
-            title: title,
-            post_time: new Date(),
-            post_content: content,
-            theme: allTheme[selected],
-            picture: base64,
-            like:0,
-            dislike:0,
-            commentcount:0
+            itemname :itemName,
+            price: itemPrice,
+            description: itemDescription,
         }
-        sendCreatePost(payload);
+        console.log(payload)
+        // sendCreateItem(payload);
         setErrorMessage('');
         alert("Your post is being uploaded!");
             history.push('/app/dashboard');
-            // setTitle('');
-        // setContent('');
-        // setHashtag('#');
-        // setSelected(-1);
-        // setSelectedImage(null);
-
     }
-    function convertToBase64(file) {
-        return new Promise((resolve, reject) => {
-            const fileReader = new FileReader();
-            fileReader.readAsDataURL(file);
-            fileReader.onload = () => {
-                resolve(fileReader.result);
-            };
-            fileReader.onerror = (error) => {
-                reject(error);
-            }
-        })
+    const onSendUpdateItem = async () => {
+        if(!itemName === -1 ){
+            setErrorMessage("Item name is missing");
+            throw console.error("Item name is missing");
+        }
+        if(!itemPrice === -1 ){
+            setErrorMessage("Item Price is missing");
+            throw console.error("Item Price is missing");
+        }
+        if(typeof(Number(itemPrice))!== 'number'){
+            setErrorMessage("Item Price is not a number");
+            throw console.error("Item Price is not a number");
+        }
+        console.log(itemName)
+        console.log(itemPrice)
+        console.log(itemDescription)
+        const payload = {
+            
+            itemname : itemNames[selected].itemname,
+            newname : itemName === ''?itemNames[selected].itemname:itemName,
+            price: itemPrice === ''?itemNames[selected].price:itemPrice,
+            description: itemDescription=== ''?itemNames[selected].description:itemDescription,
+        }
+        console.log(payload)
+        // sendUpdateItem(payload);
+        setErrorMessage('');
+        alert("Item is uploaded");
+        setItemName('')
+        setItemPrice('')
+        setItemDescription('')
+            // history.push('/app/dashboard');
+    }
+    const cleanpage = () =>{
+        setRenew(!renew)
+        setItemName('')
+        setItemPrice('')
+        setItemDescription('')
+        sendFindItemName("FindItemName");
+    }
+    const handleChange = (event) => {
+        setTmpItem(event.target.value)
+    }
+    const getAmount = (event) => {
+        setTmpAmount(event.target.value)
+    }
+
+    const addNewItem = () => {
+        if(tmpItem === ''){
+            alert("Item is missing")
+        }
+        if(tmpAmount === ''){
+            alert("Amount is missing")
+        }
+        if(tmpItem !== '' && tmpAmount !== ''){
+            setItemList([].concat(itemList, tmpItem))
+            setAmountList([].concat(amountList, tmpAmount))
+        }
+        setTmpItem('');
+        setTmpAmount('')
     }
     return (
-        // <Box>abcd</Box>
         <>
-            <PageTitle title="變更產品資訊"/>
-            <Paper>
-                <Container sx={{bgcolor: '#edfcfa'}}>
-                    <Grid container spacing={4}>
-                        <Grid item xs={12}>
-                            <TextField inputProps={{maxLength:30}} fullWidth value={title} placeholder="Title... " onChange={e => setTitle(e.target.value)}/>                
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField fullWidth multiline value={content} placeholder="Content... " onChange={e => setContent(e.target.value)}/>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField fullWidth inputProps={{maxLength:20}} value={hashtag} placeholder="#Hashtag... " onChange={e => setHashtag(e.target.value)}/>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Box>
-                                <Button
-                                    onClick={openMenu}
-                                    color="primary"
-                                    variant="contained"
-                                >
-                                {selected === -1?'Choose Theme':allTheme[selected]}
-                                </Button>
-
-                                <Menu
-                                    open={Boolean(anchor)}
-                                    anchorEl={anchor}
-                                    onClose={closeMenu}
-                                    keepMounted
-                                >
-                                    {allTheme.map((option, index) => (
-                                    <MenuItem
-                                        key={index}
-                                        onClick={(event) => onMenuItemClick(event, index)}
-                                        selected= {index === selected}
+            <PageTitle title={renew? "變更產品資訊": "新增產品資訊"}
+                button={
+                    <div>
+                        <Button
+                        onClick={()=>{cleanpage()}}
+                        variant="contained"
+                        variant="outlined" 
+                        color="secondary"
+                        style = {{backgroundColor : "blue",marginRight:"10%", width:"150px", color :"white", height:"50px" ,borderRadius:"10px"}} 
+                        >
+                        {!renew?('變更產品資訊'):('新增產品資訊')}
+                        </Button >
+                    </div>
+                }
+            />
+            {renew? 
+                <Paper>
+                    <Container sx={{bgcolor: '#edfcfa'}} style={{width:"100%"}}>
+                        <Grid container spacing={4}>
+                            <Grid item xs={12}>
+                                <Box>
+                                    <Button
+                                        onClick={openMenu}
+                                        color="primary"
+                                        variant="contained"
                                     >
-                                        {option}
-                                    </MenuItem>
-                                    ))}
-                                </Menu>
-                            </Box>
-                        </Grid>
+                                    {selected === -1?'Choose Item':itemNames[selected].itemname}
+                                    </Button>
 
-                        <Grid item xs={12}>
-                            <div style ={{marginTop:"2%", marginBottom:"0.5%" ,color:"#838383" , fontFamily:"courier"}}>Please select one image here</div>
-                            {selectedImage && (
-                                <Box >
-                                    
-                                    <img alt="not fount" width={"1024px"} src={URL.createObjectURL(selectedImage)} />
-                                    <br />
-                                    <Button onClick={()=>setSelectedImage(null)}>Remove</Button>
+                                    <Menu
+                                        open={Boolean(anchor)}
+                                        anchorEl={anchor}
+                                        onClose={closeMenu}
+                                        keepMounted
+                                    >
+                                        {itemNames.map((item, index) => (
+                                        <MenuItem
+                                            key={index}
+                                            onClick={(event) => onMenuItemClick(event, index)}
+                                            selected= {index === selected}
+                                        >
+                                            {item.itemname}
+                                        </MenuItem>
+                                        ))}
+                                    </Menu>
                                 </Box>
-                            )}
-                            {/* <br />
-                            
-                            <br />  */}
-                            <input
-                                type="file"
-                                name="myImage"
-                                onChange={(event) => {
-                                    console.log(event.target.files[0]);
-                                    setSelectedImage(event.target.files[0]);
-                                }}
-                            />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField fullWidth  inputProps={{maxLength:30}}  value={itemName} placeholder="新名稱" onChange={e => setItemName(e.target.value)}/>                
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField fullWidth value={itemPrice} placeholder="新價格（輸入阿拉伯數字）" onChange={e => setItemPrice(e.target.value)}/>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField fullWidth multiline inputProps={{maxLength:50}} value={itemDescription} placeholder="新描述" onChange={e => setItemDescription(e.target.value)}/>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button style = {{marginBottom:"20px", backgroundColor:"blue", color:"white"}}onClick={ () => checkChoose() }>Submit</Button>
+                                {/* <Button style = {{marginBottom:"20px", marginLeft:"20px", backgroundColor:"blue", color:"white"}}onClick={() => sendDeleteItem(itemNames[selected].itemname)}>Delete</Button>    */}
+                                <Typography variant="h5" sx={{color:"red"}}>
+                                    {errorMessage}
+                                </Typography>
+                            </Grid>
                         </Grid>
-
-
-                        <Grid item xs={12}>
-                            <Button onClick={ () => onSendCreatePost() }>Submit</Button>
-                            <Typography variant="h5" sx={{color:"red"}}>
-                                {errorMessage}
-                            </Typography>
+                    </Container>
+                </Paper>
+                :
+                <Paper>
+                    <Container sx={{bgcolor: '#edfcfa'}}>
+                        <Grid container spacing={4}>
+                            <Grid item xs={12}>
+                                <TextField inputProps={{maxLength:30}} fullWidth value={itemName} placeholder="產品名稱" onChange={e => setItemName(e.target.value)}/>                
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField fullWidth value={itemPrice} placeholder="產品價格（輸入阿拉伯數字）" onChange={e => setItemPrice(e.target.value)}/>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField fullWidth multiline inputProps={{maxLength:50}} value={itemDescription} placeholder="產品敘述" onChange={e => setItemDescription(e.target.value)}/>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControl sx={{ m: 1, minWidth: 120 }} >
+                                    <InputLabel id="demo-simple-select-helper-label"></InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-helper-label"
+                                        id="demo-simple-select-helper"
+                                        // value= {selected === -1?'原料名稱':itemNames[selected].itemname}
+                                        value = {tmpItem}
+                                        placeholder="原料名稱"
+                                        // label="原料名稱"
+                                        onChange={handleChange}
+                                    >
+                                        {itemNames.map((item, index) => (
+                                            <MenuItem
+                                                value={item.itemname}
+                                                key={index}
+                                                onClick={(event) => onMenuItemClick(event, index)}
+                                                selected= {index === selected}
+                                            >
+                                                {item.itemname}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                                <TextField
+                                    style = {{marginLeft:"10px", marginTop:"8px"}}
+                                    id="outlined-number"
+                                    placeholder="耗用數量"
+                                    onChange={getAmount}
+                                    type="number"
+                                />
+                                <Button style = {{marginLeft:"20px", marginTop:"20px"}}onClick={ () => addNewItem() }>新增原料</Button>
+                            </Grid>
+                            <Grid item xs={12}>
+                                {itemList.map((item) => ( 
+                                    <div>{item}</div>
+                                ))}
+                                {amountList.map((amount) => ( 
+                                    <div>{amount}</div>
+                                ))}
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button style = {{backgroudColor:"#e5e5e5", marginTop: "10px"}}onClick={ () => onSendCreateItem() }>Submit</Button>
+                                <Typography variant="h5" sx={{color:"red"}}>
+                                    {errorMessage}
+                                </Typography>
+                            </Grid>
                         </Grid>
-
-
-
-
-                    </Grid>
-                </Container>
-            </Paper>
+                    </Container>
+                </Paper>
+            }
         </>
-        
     );
 }

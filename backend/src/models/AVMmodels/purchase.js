@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 
 const PurchaseSchema = new mongoose.Schema({
+    
 
     //time:the time of the purchase
     time:{type:Date, require:true}, 
@@ -15,7 +16,10 @@ const PurchaseSchema = new mongoose.Schema({
     comment:{type:String },
 
     //onjective: 價值標的
-    objective:{type:String, require: true}
+    objective:{type:String, require: true},
+
+    //user: the user who create the post
+    user:{ type: String },
     
 });
 

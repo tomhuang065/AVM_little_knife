@@ -113,8 +113,9 @@ const ChatProvider = (props) => {
         console.log(payload)
         sendData(['updateItem', payload ])
     }
-    const sendFindItemName = () =>{
-        sendData(['findItemName'])
+    const sendFindItemName = (payload) =>{
+        // console.log("payyyyyyyyy",payload)
+        sendData(['findItemName', payload])
     }
     const sendCreateComment = (payload) => {
         sendData(['createComment', payload ])

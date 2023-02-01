@@ -115,66 +115,11 @@ const deleteItem = async (payload, ws) => {
         {itemname:payload}
     );
 }
-const findItemName = async (ws) => {
-    const list = await ItemModel.find();
-    console.log(list)
+const findItemName = async (payload, ws) => {
+    // console.log("paylooooooooooooooooooooooo",payload)
+    const list = await ItemModel.find({user : payload.user});
+    console.log(list);
     sendData(['getItemName', {List:list}], ws)
-}
-const createComment = async (payload, ws,wss) => {
-    const newComment = await new CommentModel(payload).save();
-    const pushUnderPost = 
-            (payload.agreestate === 1 || payload.agreestate === 5) ? await PostModel.findOneAndUpdate(
-                {_id: payload.underPost_id}, {$push: {agreecomments: newComment._id}}, {returnOriginal: false}
-            ):
-            await PostModel.findOneAndUpdate(
-                {_id: payload.underPost_id}, {$push: {disagreecomments: newComment._id}}, {returnOriginal: false}
-            );
-            
-    if(newComment){
-        wss.clients.forEach((client) => {
-            if(client.now==payload.underPost_id){
-                sendData(['findComments', {Comment: newComment}], client);
-            }
-        })
-    }
-    const post=await PostModel.findById(payload.underPost_id).populate("poster");
-    const poster=await UserModel.findById(post.poster._id).populate("noti");
-    poster.noti.unshift({icon:"CommentIcon",message:`Someone reply your post`,id:payload.underPost_id});
-    await poster.save();
-    wss.clients.forEach( async (client) => {
-        if(client.mail==poster.mail){
-            sendData(['noti',{User:poster}],client);
-        }
-    });
-}
-const createSubComment = async (payload, ws,wss) => {
-    const newSubComment = await new SubCommentModel(payload).save();
-    // console.log("newSubComment: ", newSubComment);
-    if(newSubComment){
-        wss.clients.forEach((client) => {
-            if(client.now==payload.sub_underPost_id){
-                // console.log(client.mail,client.now)
-                sendData(['findSubComments', newSubComment], client);
-    }
-        })
-    }
-    const comment=await CommentModel.findById(payload.underComment_id).populate("user");
-    const comment_user=await UserModel.findById(comment.user._id).populate("noti");
-    const post=await PostModel.findById(payload.sub_underPost_id).populate("poster");
-    const post_user=await UserModel.findById(post.poster._id).populate("noti");
-    comment_user.noti.unshift({icon:"ReplyIcon",message:"Someone reply your commit",id:payload.sub_underPost_id});
-    await comment_user.save();
-    if(comment_user.id!=post_user.id){
-        post_user.noti.unshift({icon:"CommentIcon",message:"Someone reply your post",id:payload.sub_underPost_id});
-        await post_user.save();
-    }
-    wss.clients.forEach( async (client) => {
-        if(client.mail==comment_user.mail){
-            sendData(['noti',{User:comment_user}],client);
-        }else if(client.mail==post_user.mail){
-            sendData(['noti',{User:post_user}],client);
-        }
-    });
 }
 const getPostsFromDB = async (payload, ws) => {
     const {sorttype, fromPostNum, theme} = payload;
@@ -284,17 +229,8 @@ export default {
                     break;
                 }
                 case 'findItemName':{
-                    findItemName(ws);
-                }
-                case 'createComment':{
-                    const Comments = await createComment(payload, ws,wss);
-                    // console.log("getcomment", payload)
-                    break;
-                }
-                case 'createSubComment':{
-                    const subComments = await createSubComment(payload, ws,wss);
-                    // console.log("getsubcomment", payload)
-                    break;
+                    // console.log(payload)
+                    findItemName(payload, ws);
                 }
                 case 'getDashboardPosts': {
                     const Posts = await getPostsFromDB(payload, ws);

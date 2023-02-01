@@ -34,8 +34,8 @@ const structure = [
   // { id: 15, label: "Create New Post", link: "/app/createPost", icon: <EditOutlinedIcon/>},
   { id: 16, label: "上傳POS機資料", link: "/app/insertpos", icon: <UploadIcon/>},
   { id: 17, label: "購入原料", link: "/app/purchase", icon: <ShoppingBagIcon/>},
-  { id: 18, label: "變更原料資訊", link: "/app/modifyitem", icon: <CategoryIcon/>},
-  { id: 19, label: "變更產品資訊", link: "/app/modifyproduct", icon: <InventoryIcon/>},
+  { id: 18, label: "原料資訊", link: "/app/modifyitem", icon: <CategoryIcon/>},
+  { id: 19, label: "產品資訊", link: "/app/modifyproduct", icon: <InventoryIcon/>},
   { id: 20, label: "庫存", link: "/app/stock", icon: <InventoryIcon/>},
 
 
