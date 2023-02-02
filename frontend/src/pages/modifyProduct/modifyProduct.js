@@ -7,7 +7,6 @@ import { useHistory } from "react-router-dom"
 export default function CreatePost () {
 
     const history = useHistory();
-    const [title, setTitle] = useState('');
     const [tmpItem, setTmpItem] = useState('');
     const [tmpAmount, setTmpAmount] = useState(0);
     const [itemList, setItemList] = useState([]);
@@ -16,12 +15,9 @@ export default function CreatePost () {
     const [productName, setProductName] = useState('');
     const [productPrice, setProductPrice] = useState('');
     const [productDescription, setProductDescription] = useState('');
-    const [content, setContent] = useState('');
-    const [hashtag, setHashtag] = useState('#');
     const [anchor, setAnchor] = useState(null); //for menu
     const [selected, setSelected] = useState(-1); //selected index
-    const [selectedImage, setSelectedImage] = useState(null);
-    const {sendCreatePost, sendCreateProduct, sendUpdateItem, sendDeleteItem, sendFindItemName, itemNames, person, allTheme, jumpDash, setJumpDash, jumpPostId} = useChat();
+    const {sendCreatePost, sendCreateProduct, sendFindProductName, productNames, itemNames, person} = useChat();
     const [errorMessage, setErrorMessage] = useState('');
 
     const openMenu = (event) => {
@@ -100,10 +96,13 @@ export default function CreatePost () {
         // }
         const payload = {
             user:person.mail, 
-            itemname : itemNames[selected].itemname,
-            newname : productName === ''?itemNames[selected].itemname:productName,
-            price: productPrice === ''?itemNames[selected].price:productPrice,
-            description: productDescription=== ''?itemNames[selected].description:productDescription,
+            productname : productNames[selected].productname,
+            newname : productName === ''?productNames[selected].productname:productName,
+            productprice: productPrice === ''?productNames[selected].productprice:productPrice,
+            description: productDescription=== ''?productNames[selected].description:productDescription,
+            // itemlist:,
+            // amountlist:,
+            // 修好下拉市選單機制
         }
         console.log(payload)
         // sendUpdateItem(payload);
@@ -119,6 +118,10 @@ export default function CreatePost () {
         setProductName('')
         setProductPrice('')
         setProductDescription('')
+        const payload = {
+            user:person.mail,
+        }
+        sendFindProductName(payload)
     }
     const handleChange = (event) => {
         setTmpItem(event.target.value)
@@ -160,7 +163,7 @@ export default function CreatePost () {
             />
             {renew? 
                 <Paper>
-                    <Container sx={{bgcolor: '#edfcfa'}} style={{width:"100%"}}>
+                    <Container sx={{bgcolor: '#edfcfa'}}>
                         <Grid container spacing={4}>
                             <Grid item xs={12}>
                                 <Box>
@@ -169,7 +172,7 @@ export default function CreatePost () {
                                         color="primary"
                                         variant="contained"
                                     >
-                                    {selected === -1?'Choose Item':itemNames[selected].itemname}
+                                    {selected === -1?'Choose Product':productNames[selected].productname}
                                     </Button>
 
                                     <Menu
@@ -178,30 +181,70 @@ export default function CreatePost () {
                                         onClose={closeMenu}
                                         keepMounted
                                     >
-                                        {itemNames.map((item, index) => (
+                                        {productNames.map((product, index) => (
                                         <MenuItem
                                             key={index}
                                             onClick={(event) => onMenuItemClick(event, index)}
                                             selected= {index === selected}
                                         >
-                                            {item.itemname}
+                                            {product.productname}
                                         </MenuItem>
                                         ))}
                                     </Menu>
                                 </Box>
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField fullWidth  inputProps={{maxLength:30}}  value={productName} placeholder="新名稱" onChange={e => setProductName(e.target.value)}/>                
+                                <TextField inputProps={{maxLength:30}} fullWidth value={productName} placeholder="新名稱" onChange={e => setProductName(e.target.value)}/>                
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField fullWidth value={productPrice} placeholder="新價格（輸入阿拉伯數字）" onChange={e => setProductPrice(e.target.value)}/>
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField fullWidth multiline inputProps={{maxLength:50}} value={productDescription} placeholder="新描述" onChange={e => setProductDescription(e.target.value)}/>
+                                <TextField fullWidth multiline inputProps={{maxLength:50}} value={productDescription} placeholder="新敘述" onChange={e => setProductDescription(e.target.value)}/>
                             </Grid>
                             <Grid item xs={12}>
-                                <Button style = {{marginBottom:"20px", backgroundColor:"blue", color:"white"}}onClick={ () => checkChoose() }>Submit</Button>
-                                {/* <Button style = {{marginBottom:"20px", marginLeft:"20px", backgroundColor:"blue", color:"white"}}onClick={() => sendDeleteItem(itemNames[selected].itemname)}>Delete</Button>    */}
+                                <FormControl sx={{ m: 1, minWidth: 120 }} >
+                                    <InputLabel id="demo-simple-select-helper-label"></InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-helper-label"
+                                        id="demo-simple-select-helper"
+                                        // value= {selected === -1?'原料名稱':itemNames[selected].itemname}
+                                        value = {tmpItem}
+                                        placeholder="原料名稱"
+                                        onClick={openMenu}
+                                        onChange={handleChange}
+                                    >
+                                        {itemNames.map((item, index) => (
+                                            <MenuItem
+                                                value={item.itemname}
+                                                key={index}
+                                                onClick={(event) => onMenuItemClick(event, index)}
+                                                selected= {index === selected}
+                                            >
+                                                {item.itemname}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                                <TextField
+                                    style = {{marginLeft:"10px", marginTop:"8px"}}
+                                    id="outlined-number"
+                                    placeholder="耗用數量"
+                                    onChange={getAmount}
+                                    type="number"
+                                />
+                                <Button style = {{marginLeft:"20px", marginTop:"20px"}}onClick={ () => addNewItem() }>新增原料</Button>
+                            </Grid>
+                            <Grid item xs={12}>
+                                {itemList.map((item) => ( 
+                                    <div>{item}</div>
+                                ))}
+                                {amountList.map((amount) => ( 
+                                    <div>{amount}</div>
+                                ))}
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button style = {{backgroudColor:"#e5e5e5", marginTop: "10px"}}onClick={ () => onSendCreateProduct() }>Submit</Button>
                                 <Typography variant="h5" sx={{color:"red"}}>
                                     {errorMessage}
                                 </Typography>

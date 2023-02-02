@@ -10,6 +10,7 @@ export default function CreatePost () {
     const [title, setTitle] = useState('');
     const [renew, setRenew] = useState(false)
     const [itemName, setItemName] = useState('');
+    const [itemUnit, setItemUnit] = useState('');
     const [itemPrice, setItemPrice] = useState('');
     const [itemDescription, setItemDescription] = useState('');
     const [content, setContent] = useState('');
@@ -61,6 +62,10 @@ export default function CreatePost () {
             setErrorMessage("Item Price is missing");
             throw console.error("Item Price is missing");
         }
+        if(!itemUnit === -1 ){
+            setErrorMessage("Item Unit is missing");
+            throw console.error("Item Unit is missing");
+        }
         console.log(typeof(Number(itemPrice)))
         if(typeof(Number(itemPrice))!== 'number'){
             setErrorMessage("Item Price is not a number");
@@ -69,16 +74,18 @@ export default function CreatePost () {
         const payload = {
             user:person.mail,
             itemname :itemName,
+            unit:itemUnit,
             price: itemPrice,
             description: itemDescription,
         }
         console.log(payload)
         sendCreateItem(payload);
-        cleanpage();
+        // cleanpage();
         setErrorMessage('');
         alert("Item is created!");
         setItemName('')
         setItemPrice('')
+        setItemUnit('')
         setItemDescription('')
             // history.push('/app/dashboard');
     }
@@ -107,7 +114,7 @@ export default function CreatePost () {
         }
         console.log(payload)
         sendUpdateItem(payload);
-        cleanpage();
+        // cleanpage();
         // setRenew(!renew)
         setErrorMessage('');
         alert("Item is uploaded");
@@ -118,7 +125,7 @@ export default function CreatePost () {
             // history.push('/app/dashboard');
     }
     const cleanpage = () =>{
-        // setRenew(!renew)
+        setRenew(!renew)
         setItemName('')
         setItemPrice('')
         setItemDescription('')
@@ -206,6 +213,9 @@ export default function CreatePost () {
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField fullWidth value={itemPrice} placeholder="Item Price (Enter Number) " onChange={e => setItemPrice(e.target.value)}/>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField fullWidth value={itemUnit} placeholder="Item Unit" onChange={e => setItemUnit(e.target.value)}/>
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField fullWidth multiline inputProps={{maxLength:50}} value={itemDescription} placeholder="Item Description... " onChange={e => setItemDescription(e.target.value)}/>

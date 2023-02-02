@@ -20,6 +20,9 @@ const ProductSchema = new mongoose.Schema({
     //user: the user who create the post
     user:{ type: String },
 
+    //newname:
+    newname:{ type:String}
+
 });
 
 const ProductModel = mongoose.model('Product', ProductSchema)

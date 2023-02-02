@@ -11,6 +11,9 @@ const ItemSchema = new mongoose.Schema({
     //amount : the number ot the item left, initialized as zero
     amount:{type:String},
 
+    //unit : the unit of the product
+    unit:{type:String, required:true},
+
     //description:
     description:{ type:String },
 
