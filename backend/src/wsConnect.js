@@ -1,9 +1,8 @@
 import UserModel from './models/user.js'
 import PostModel from './models/post.js';
-import CommentModel from './models/comment.js';
 import SubCommentModel from './models/subcomment.js';
-import CustomerModel from './models/AVMmodels/customer.js';
 import ItemModel from './models/AVMmodels/item.js';
+import ProductModel from './models/AVMmodels/product.js'
 import mongoose, { get } from 'mongoose';
 import { compareSync } from 'bcryptjs';
 
@@ -12,12 +11,6 @@ const sendData = (data, ws) => {
     ws.send(JSON.stringify(data)); 
 }
 const signIn =async (payload,ws) => {
-    // await new CustomerModel({
-    //     username: "testname",
-    //     mail: "testmail",
-    //     password: "testpassword",
-      
-    // }).save()
     const person1=await UserModel.findOne({nickname:payload.nickname});
     const person2=await UserModel.findOne({mail:payload.mail});
     if(!person1 && !person2 ){
@@ -39,12 +32,6 @@ const signIn =async (payload,ws) => {
     }
 }
 const login =async (payload,ws) => {
-    // await new CustomerModel({
-    //     username: "testname",
-    //     mail: "testmail",
-    //     password: "testpassword",
-      
-    // }).save()
     const person=await UserModel.findOne({mail:payload.mail}).populate("noti");
     if(!person){
         sendData(['loginStatus',{status:false,User:''}],ws);
@@ -89,37 +76,36 @@ const editLike =async (payload,ws) => {
 }
 
 const createItem = async (payload, ws) => {
-    // sendData(['createPost',{status:true}],ws);
-    console.log(payload)
+    // console.log(payload)
     const newItem = await new ItemModel(payload);
-    // console.log("newPost: ", newPost);
-    // sendData(['createPost',{status:true, newPostId: newPost.id}],ws);
     await newItem.save();
-    // if.. sendData..?
 }
 const updateItem = async (payload, ws) => {
-    // sendData(['createPost',{status:true}],ws);
-    console.log(payload)
+    // console.log(payload)
     const UpdateItem = await ItemModel.findOneAndUpdate(
         {itemname:payload.itemname}, {$set:{itemname:payload.newname, price:payload.price, description:payload.description}}
     );
-    // console.log("newPost: ", newPost);
-    // sendData(['createPost',{status:true, newPostId: newPost.id}],ws);
-    // await newItem.save();
-    // if.. sendData..?
 }
 const deleteItem = async (payload, ws) => {
-    // sendData(['createPost',{status:true}],ws);
-    console.log(payload)
+    // console.log(payload)
     const UpdateItem = await ItemModel.findOneAndDelete(
         {itemname:payload}
     );
 }
+const createProduct = async (payload, ws) => {
+    console.log(payload)
+    const newProduct = await new ProductModel(payload);
+    await newProduct.save();
+}
 const findItemName = async (payload, ws) => {
-    // console.log("paylooooooooooooooooooooooo",payload)
-    const list = await ItemModel.find({user : payload.user});
-    console.log(list);
-    sendData(['getItemName', {List:list}], ws)
+    const itemlist = await ItemModel.find({user : payload.user});
+    console.log(itemlist);
+    sendData(['getItemName', {List:itemlist}], ws)
+}
+const findProductName = async (payload, ws) => {
+    const productlist = await ProductModel.find({user : payload.user});
+    console.log(productlist);
+    sendData(['getProductName', {List:productlist}], ws)
 }
 const getPostsFromDB = async (payload, ws) => {
     const {sorttype, fromPostNum, theme} = payload;
@@ -131,9 +117,7 @@ const getPostsFromDB = async (payload, ws) => {
         (theme===''?
         await PostModel.find().populate('poster').sort({like: -1}).skip(fromPostNum).limit(10):
         await PostModel.find({theme}).populate('poster').sort({like: -1}).skip(fromPostNum).limit(10));
-    // console.log("POST from DB", fromPostNum);
     const newPostsCount = posts.length;
-    // console.log("allpostcount", newPostsCount);
     if(posts){
         sendData(['dashboardPosts', {posts, newPostsCount}], ws);
     }
@@ -148,7 +132,6 @@ const getPostby_id = async (payload,ws) => {
 
 
     if(post!={}){
-        // let ret = await post[0].populate('agreecomments');
         // const ret = await PostModel.findOne({_id}).populate('agreecomments').exec(function(err, com){
         //     console.log('POST POPULATE: ', com);
         // })
@@ -190,8 +173,8 @@ export default {
         ws.onmessage =async function(byteString) {
             const { data } = byteString
             const [task, payload] = JSON.parse(data)
-            // console.log(task);
-            // console.log(payload);
+            console.log(task);
+            console.log(payload);
             switch (task) {
                 case 'signIn': {
                     signIn(payload,ws);
@@ -223,14 +206,17 @@ export default {
                     deleteItem(payload, ws);
                     break;
                 }
-                case 'createItem': {
-                    // console.log("createpostdata",  payload);
-                    createItem(payload, ws);
+                case 'createProduct': {
+                    createProduct(payload, ws);
                     break;
                 }
                 case 'findItemName':{
                     // console.log(payload)
                     findItemName(payload, ws);
+                }
+                case 'findProductName':{
+                    // console.log(payload)
+                    findProductName(payload, ws);
                 }
                 case 'getDashboardPosts': {
                     const Posts = await getPostsFromDB(payload, ws);

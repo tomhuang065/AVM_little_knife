@@ -21,11 +21,6 @@ export default function CreatePost () {
     const [errorMessage, setErrorMessage] = useState('');
 
     const openMenu = (event) => {
-        const payload = {
-            user:person.mail,
-        }
-        // console.log(payload)
-        sendFindItemName(payload);
         setAnchor(event.currentTarget);
     };
     const closeMenu = () => {
@@ -39,9 +34,19 @@ export default function CreatePost () {
         // setItemDescription(itemNames[selected].description)
 
     }
-    const checkChoose = () =>{
+    const checkSelectedSubmit = () =>{
         if(selected !== -1){
             onSendUpdateItem();
+        }
+        else {
+            alert("Item not chosen")
+        }
+    }
+    const checkSelectedDelete = () =>{
+        if(selected !== -1){
+            sendDeleteItem(itemNames[selected].itemname);
+            alert(itemNames[selected].itemname, "is deleted")
+            setSelected(-1)
         }
         else {
             alert("Item not chosen")
@@ -69,9 +74,13 @@ export default function CreatePost () {
         }
         console.log(payload)
         sendCreateItem(payload);
+        cleanpage();
         setErrorMessage('');
-        alert("Your post is being uploaded!");
-            history.push('/app/dashboard');
+        alert("Item is created!");
+        setItemName('')
+        setItemPrice('')
+        setItemDescription('')
+            // history.push('/app/dashboard');
     }
     const onSendUpdateItem = async () => {
         if(!itemName === -1 ){
@@ -98,15 +107,18 @@ export default function CreatePost () {
         }
         console.log(payload)
         sendUpdateItem(payload);
+        cleanpage();
+        // setRenew(!renew)
         setErrorMessage('');
         alert("Item is uploaded");
+        setSelected(-1);
         setItemName('')
         setItemPrice('')
         setItemDescription('')
             // history.push('/app/dashboard');
     }
     const cleanpage = () =>{
-        setRenew(!renew)
+        // setRenew(!renew)
         setItemName('')
         setItemPrice('')
         setItemDescription('')
@@ -114,6 +126,7 @@ export default function CreatePost () {
             user:person.mail,
         }
         sendFindItemName(payload);
+     
     }
 
     return (
@@ -175,8 +188,8 @@ export default function CreatePost () {
                                 <TextField fullWidth multiline inputProps={{maxLength:50}} value={itemDescription} placeholder="Item Description... " onChange={e => setItemDescription(e.target.value)}/>
                             </Grid>
                             <Grid item xs={12}>
-                                <Button style = {{marginBottom:"20px", backgroundColor:"blue", color:"white"}}onClick={ () => checkChoose() }>Submit</Button>
-                                <Button style = {{marginBottom:"20px", marginLeft:"20px", backgroundColor:"red", color:"white"}}onClick={() => sendDeleteItem(itemNames[selected].itemname)}>Delete</Button>   
+                                <Button style = {{marginBottom:"20px", backgroundColor:"blue", color:"white"}}onClick={ () => checkSelectedSubmit() }>Submit</Button>
+                                <Button style = {{marginBottom:"20px", marginLeft:"20px", backgroundColor:"red", color:"white"}} onClick={() => checkSelectedDelete() }>Delete</Button>   
                                 <Typography variant="h5" sx={{color:"red"}}>
                                     {errorMessage}
                                 </Typography>

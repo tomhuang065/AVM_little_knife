@@ -26,10 +26,10 @@ const ChatContext = createContext({
     sendDeleteItem:() => {},
     sendUpdateItem: ()=>{},
     sendFindItemName: () => {},
-    sendCreateComment: ()=>{},
-    sendCreateSubComment: ()=>{},
-    // createPostData: {}
+    sendFindProductName: () => {},
+    sendCreateProduct:() => {},
     itemNames:{},
+    productNames:{},
     person: {},
     sendGetDashboardPosts:() =>{},
     DashboardPosts: [],
@@ -72,6 +72,7 @@ const ChatProvider = (props) => {
     var [password,setPassword] = useState('');
     const [person, setPerson] = useState({});
     const [itemNames, setItemNames] = useState([]);
+    const [productNames, setProductNames] = useState([]);
     const [DashboardPosts, setDashboardPosts] = useState([]);
     const [currentLocation, setCurrentLocation] = useState('');
     const [NotificationPost, setNotificationPost] = useState({});
@@ -114,16 +115,14 @@ const ChatProvider = (props) => {
         sendData(['updateItem', payload ])
     }
     const sendFindItemName = (payload) =>{
-        // console.log("payyyyyyyyy",payload)
         sendData(['findItemName', payload])
     }
-    const sendCreateComment = (payload) => {
-        sendData(['createComment', payload ])
-        // console.log(payload)
+    const sendFindProductName = (payload) =>{
+        sendData(['findProductName', payload])
     }
-    const sendCreateSubComment = (payload) => {
-        sendData(['createSubComment', payload ])
-        // console.log(payload)
+    const sendCreateProduct = (payload) => {
+        console.log("payyyyyyyyy",payload)
+        sendData(['createProduct', payload ])
     }
     const sendGetDashboardPosts = (sorttype, fromPostNum, theme,ci) => {
         setDashPostsIsLoading(true);
@@ -151,6 +150,10 @@ const ChatProvider = (props) => {
             case 'getItemName':{
                 console.log(payload.List)
                 setItemNames(payload.List)
+            }
+            case 'getProductName':{
+                console.log(payload.List)
+                setProductNames(payload.List)
             }
             case "signInStatus": {
                 if(payload.status===true){
@@ -253,14 +256,16 @@ const ChatProvider = (props) => {
                 // createPostData, setCreatePostData
                 person,
                 itemNames,
+                productNames,
                 sendCreateItem,
                 sendUpdateItem,
                 sendDeleteItem,
                 sendFindItemName,
-                sendCreateComment,
-                sendCreateSubComment,
+                sendFindProductName,
+                sendCreateProduct,
                 sendGetDashboardPosts,
-                DashboardPosts,setDashboardPosts,
+                DashboardPosts,
+                setDashboardPosts,
                 currentLocation,setCurrentLocation,
                 sendGetNotificationPost,
                 NotificationPost,editUser,

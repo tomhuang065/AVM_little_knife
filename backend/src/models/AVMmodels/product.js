@@ -6,10 +6,10 @@ const ProductSchema = new mongoose.Schema({
     productname:{ type:String, required:true},
 
     //revenue : how much money we can get by selling one of it, use to generate forms
-    revenue:{type:String, require:true},
+    productprice:{type:String, require:true},
 
     //itemlist : the name of items for each product selled
-    itemlist: [{ type : mongoose.Types.ObjectId, ref: 'Item', required:true}],
+    itemlist: [{ type : String, require:true}],
 
     //amountlist : the amount of items for each product elled, corresponding to itemlist
     amountlist : [{type:String, require:true}],
@@ -18,7 +18,7 @@ const ProductSchema = new mongoose.Schema({
     description:{type:String},
 
     //user: the user who create the post
-    user:{ type: String},
+    user:{ type: String },
 
 });
 

@@ -13,19 +13,18 @@ export default function CreatePost () {
     const [itemList, setItemList] = useState([]);
     const [amountList, setAmountList] = useState([]);
     const [renew, setRenew] = useState(false)
-    const [itemName, setItemName] = useState('');
-    const [itemPrice, setItemPrice] = useState('');
-    const [itemDescription, setItemDescription] = useState('');
+    const [productName, setProductName] = useState('');
+    const [productPrice, setProductPrice] = useState('');
+    const [productDescription, setProductDescription] = useState('');
     const [content, setContent] = useState('');
     const [hashtag, setHashtag] = useState('#');
     const [anchor, setAnchor] = useState(null); //for menu
     const [selected, setSelected] = useState(-1); //selected index
     const [selectedImage, setSelectedImage] = useState(null);
-    const {sendCreatePost, sendCreateItem, sendUpdateItem, sendDeleteItem, sendFindItemName, itemNames, person, allTheme, jumpDash, setJumpDash, jumpPostId} = useChat();
+    const {sendCreatePost, sendCreateProduct, sendUpdateItem, sendDeleteItem, sendFindItemName, itemNames, person, allTheme, jumpDash, setJumpDash, jumpPostId} = useChat();
     const [errorMessage, setErrorMessage] = useState('');
 
     const openMenu = (event) => {
-        sendFindItemName("FindItemName");
         setAnchor(event.currentTarget);
     };
     const closeMenu = () => {
@@ -41,77 +40,85 @@ export default function CreatePost () {
     }
     const checkChoose = () =>{
         if(selected !== -1){
-            onSendUpdateItem();
+            onSendUpdateProduct();
         }
         else {
             alert("Item not chosen")
         }
     }
-    const onSendCreateItem = async () => {
-        console.log(amountList)
-        console.log(itemList)
-        if(!itemName === -1 ){
-            setErrorMessage("Item name is missing");
-            throw console.error("Item name is missing");
+    const onSendCreateProduct = async () => {
+        // const payload = {
+        //     user:person.mail,
+        // }
+        // sendFindItemName(payload);
+        // console.log(amountList)
+        // console.log(itemList)
+        if(productName === '' || productPrice === '' ){
+            setErrorMessage("Product name or product price is missing");
+            throw console.error("Product name or product priceis missing");
         }
-        if(!itemPrice === -1 ){
-            setErrorMessage("Item Price is missing");
-            throw console.error("Item Price is missing");
+        if(itemList === [] || amountList === []){
+            setErrorMessage("Item or amount is missing");
+            throw console.error("Item or amount is missing");
         }
-        console.log(typeof(Number(itemPrice)))
-        if(typeof(Number(itemPrice))!== 'number'){
-            setErrorMessage("Item Price is not a number");
-            alert("Item Price is not a number");
-        }
-        const payload = {
-            itemname :itemName,
-            price: itemPrice,
-            description: itemDescription,
-        }
-        console.log(payload)
-        // sendCreateItem(payload);
-        setErrorMessage('');
-        alert("Your post is being uploaded!");
-            history.push('/app/dashboard');
-    }
-    const onSendUpdateItem = async () => {
-        if(!itemName === -1 ){
-            setErrorMessage("Item name is missing");
-            throw console.error("Item name is missing");
-        }
-        if(!itemPrice === -1 ){
-            setErrorMessage("Item Price is missing");
-            throw console.error("Item Price is missing");
-        }
-        if(typeof(Number(itemPrice))!== 'number'){
-            setErrorMessage("Item Price is not a number");
-            throw console.error("Item Price is not a number");
-        }
-        console.log(itemName)
-        console.log(itemPrice)
-        console.log(itemDescription)
+        
         const payload = {
             
+            productname :productName,
+            productprice: productPrice,
+            description: productDescription,
+            itemlist:itemList,
+            amountlist:amountList,
+            user:person.mail,
+        }
+        console.log(payload)
+        if(productName !== '' && productPrice !== '' && itemList !== [] && amountList !== []){
+                    sendCreateProduct(payload);
+        }
+
+        setErrorMessage('');
+        setProductName('')
+        setProductPrice('')
+        setProductDescription('')
+        setItemList([])
+        setAmountList([])
+        alert("Product is created!");
+            // history.push('/app/dashboard');
+    }
+    const onSendUpdateProduct = async () => {
+        // if(!itemName === -1 ){
+        //     setErrorMessage("Item name is missing");
+        //     throw console.error("Item name is missing");
+        // }
+        // if(!itemPrice === -1 ){
+        //     setErrorMessage("Item Price is missing");
+        //     throw console.error("Item Price is missing");
+        // }
+        // if(typeof(Number(itemPrice))!== 'number'){
+        //     setErrorMessage("Item Price is not a number");
+        //     throw console.error("Item Price is not a number");
+        // }
+        const payload = {
+            user:person.mail, 
             itemname : itemNames[selected].itemname,
-            newname : itemName === ''?itemNames[selected].itemname:itemName,
-            price: itemPrice === ''?itemNames[selected].price:itemPrice,
-            description: itemDescription=== ''?itemNames[selected].description:itemDescription,
+            newname : productName === ''?itemNames[selected].itemname:productName,
+            price: productPrice === ''?itemNames[selected].price:productPrice,
+            description: productDescription=== ''?itemNames[selected].description:productDescription,
         }
         console.log(payload)
         // sendUpdateItem(payload);
         setErrorMessage('');
-        alert("Item is uploaded");
-        setItemName('')
-        setItemPrice('')
-        setItemDescription('')
+        alert("Product is uploaded");
+        setProductName('')
+        setProductPrice('')
+        setProductDescription('')
             // history.push('/app/dashboard');
     }
     const cleanpage = () =>{
         setRenew(!renew)
-        setItemName('')
-        setItemPrice('')
-        setItemDescription('')
-        sendFindItemName("FindItemName");
+        setProductName('')
+        setProductPrice('')
+        setProductDescription('')
     }
     const handleChange = (event) => {
         setTmpItem(event.target.value)
@@ -184,13 +191,13 @@ export default function CreatePost () {
                                 </Box>
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField fullWidth  inputProps={{maxLength:30}}  value={itemName} placeholder="新名稱" onChange={e => setItemName(e.target.value)}/>                
+                                <TextField fullWidth  inputProps={{maxLength:30}}  value={productName} placeholder="新名稱" onChange={e => setProductName(e.target.value)}/>                
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField fullWidth value={itemPrice} placeholder="新價格（輸入阿拉伯數字）" onChange={e => setItemPrice(e.target.value)}/>
+                                <TextField fullWidth value={productPrice} placeholder="新價格（輸入阿拉伯數字）" onChange={e => setProductPrice(e.target.value)}/>
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField fullWidth multiline inputProps={{maxLength:50}} value={itemDescription} placeholder="新描述" onChange={e => setItemDescription(e.target.value)}/>
+                                <TextField fullWidth multiline inputProps={{maxLength:50}} value={productDescription} placeholder="新描述" onChange={e => setProductDescription(e.target.value)}/>
                             </Grid>
                             <Grid item xs={12}>
                                 <Button style = {{marginBottom:"20px", backgroundColor:"blue", color:"white"}}onClick={ () => checkChoose() }>Submit</Button>
@@ -207,13 +214,13 @@ export default function CreatePost () {
                     <Container sx={{bgcolor: '#edfcfa'}}>
                         <Grid container spacing={4}>
                             <Grid item xs={12}>
-                                <TextField inputProps={{maxLength:30}} fullWidth value={itemName} placeholder="產品名稱" onChange={e => setItemName(e.target.value)}/>                
+                                <TextField inputProps={{maxLength:30}} fullWidth value={productName} placeholder="產品名稱" onChange={e => setProductName(e.target.value)}/>                
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField fullWidth value={itemPrice} placeholder="產品價格（輸入阿拉伯數字）" onChange={e => setItemPrice(e.target.value)}/>
+                                <TextField fullWidth value={productPrice} placeholder="產品價格（輸入阿拉伯數字）" onChange={e => setProductPrice(e.target.value)}/>
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField fullWidth multiline inputProps={{maxLength:50}} value={itemDescription} placeholder="產品敘述" onChange={e => setItemDescription(e.target.value)}/>
+                                <TextField fullWidth multiline inputProps={{maxLength:50}} value={productDescription} placeholder="產品敘述" onChange={e => setProductDescription(e.target.value)}/>
                             </Grid>
                             <Grid item xs={12}>
                                 <FormControl sx={{ m: 1, minWidth: 120 }} >
@@ -224,7 +231,7 @@ export default function CreatePost () {
                                         // value= {selected === -1?'原料名稱':itemNames[selected].itemname}
                                         value = {tmpItem}
                                         placeholder="原料名稱"
-                                        // label="原料名稱"
+                                        onClick={openMenu}
                                         onChange={handleChange}
                                     >
                                         {itemNames.map((item, index) => (
@@ -257,7 +264,7 @@ export default function CreatePost () {
                                 ))}
                             </Grid>
                             <Grid item xs={12}>
-                                <Button style = {{backgroudColor:"#e5e5e5", marginTop: "10px"}}onClick={ () => onSendCreateItem() }>Submit</Button>
+                                <Button style = {{backgroudColor:"#e5e5e5", marginTop: "10px"}}onClick={ () => onSendCreateProduct() }>Submit</Button>
                                 <Typography variant="h5" sx={{color:"red"}}>
                                     {errorMessage}
                                 </Typography>

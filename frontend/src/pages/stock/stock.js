@@ -8,26 +8,22 @@ export default function CreatePost () {
 
     const history = useHistory();
     const [title, setTitle] = useState('');
-    const [show, setShow] = useState(false);
+    const [showItem, setShowItem] = useState(false);
+    const [showProduct, setShowProduct] = useState(false);
     const [content, setContent] = useState('');
     const [hashtag, setHashtag] = useState('#');
     const [anchor, setAnchor] = useState(null); //for menu
     const [selected, setSelected] = useState(-1); //selected index
     const [selectedImage, setSelectedImage] = useState(null);
-    const {sendCreatePost, person, allTheme, sendFindItemName, itemNames, jumpDash, setJumpDash, jumpPostId} = useChat();
+    const {sendCreatePost, person, allTheme, sendFindItemName, sendFindProductName, itemNames, productNames, jumpDash, setJumpDash, jumpPostId} = useChat();
     const [errorMessage, setErrorMessage] = useState('');
-    // const allTheme = [
-    //     'Feelings', 'Politics', 'DailyLife'
-    // ]
-    console.log("in createpost")
-    // useEffect(() => {
-    //     if(jumpDash === true){
-    //         // history.push('/app/post/'+jumpPostId);
-    //         history.push('/app/dashboard');
-    //         setJumpDash(false);
-    //     }
-    // }, [jumpDash]);
+    // console.log("in createpost")
 
+    useEffect(()=>{
+
+        console.log(showItem)
+    }
+    ,[showItem])
     const openMenu = (event) => {
         setAnchor(event.currentTarget);
     };
@@ -80,38 +76,70 @@ export default function CreatePost () {
             }
         })
     }
-    const showing = () => {
-        setShow(!show)
+    const showitem = () => {
+        setShowItem(!showItem)
         const payload = {
             user:person.mail,
         }
         // console.log(payload)
-        sendFindItemName(payload);
-        
+        sendFindItemName(payload); 
+           
     }
 
+    const showproduct = () => {
+        setShowProduct(!showProduct)
+        const payload = {
+            user:person.mail,
+        }
+        // console.log(payload)
+        sendFindProductName(payload);    
+    }
     return (
         <>
             <PageTitle title="庫存"
                 button={
                     <div>
-                        <Button
-                        onClick={()=>{showing()}}
-                        variant="contained"
-                        variant="outlined" 
-                        color="secondary"
-                        style = {{backgroundColor : "blue",marginRight:"10%", width:"150px", color :"white", height:"50px" ,borderRadius:"10px"}} 
-                        >
-                        {!show?('顯示庫存'):('隱藏庫存')}
-                        </Button >
+                         <div>
+                            <Button
+                            onClick={()=>{showitem()}}
+                            variant="contained"
+                            variant="outlined" 
+                            color="secondary"
+                            style = {{backgroundColor : "blue",marginRight:"10%", width:"150px", color :"white", height:"50px" ,borderRadius:"10px"}} 
+                            >
+                            {!showItem?('顯示庫存'):('隱藏庫存')}
+                            </Button >
+                        </div>
+                        <div>
+                            <Button
+                            onClick={()=>{showproduct()}}
+                            variant="contained"
+                            variant="outlined" 
+                            color="secondary"
+                            style = {{backgroundColor : "blue",marginRight:"10%", marginTop:"20px", width:"150px", color :"white", height:"50px" ,borderRadius:"10px"}} 
+                            >
+                            {!showProduct?('顯示產品'):('隱藏產品')}
+                            </Button >
+                        </div>
                     </div>
+                   
                 }
             />
             {/* <div>{itemNames}</div> */}
-            {show?
+            {showItem?
                 <div>
                 {itemNames.map((item, index) => (
                     <div>Item Name : {item.itemname}   Item Amount:{item.amount} Item Price:{item.price}  Item Description:{item.description}</div>
+                ))}
+            </div>:
+            <div></div>
+            // use a mui table here
+            }
+            {/* <div>{itemNames}</div> */}
+            {showProduct?
+                <div>
+                {productNames.map((product, index) => (
+                    <div>Prodcut Name : {product.productname}   Product price:{product.productprice}  Product Description:{product.description} Items used:{product.itemlist} Amount used:{product.amountlist}</div>
                 ))}
             </div>:
             <div></div>

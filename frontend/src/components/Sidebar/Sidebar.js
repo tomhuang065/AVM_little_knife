@@ -44,10 +44,12 @@ const structure = [
 ];
 
 function Sidebar({ location }) {
-  const {setCurrentLocation, currentLocation} = useChat();
+  const {setCurrentLocation, currentLocation, sendFindItemName, person} = useChat();
   if(location.pathname !== currentLocation){
-    console.log(location.pathname);
-    console.log(currentLocation);
+    const payload = {
+      user:person.mail,
+  }
+    sendFindItemName(payload);
     setCurrentLocation(location.pathname);
   } 
   var classes = useStyles();
