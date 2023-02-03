@@ -28,6 +28,8 @@ const ChatContext = createContext({
     sendFindItemName: () => {},
     sendFindProductName: () => {},
     sendCreateProduct:() => {},
+    sendUpdateProduct: ()=>{},
+    sendDeleteProduct: ()=>{},
     itemNames:{},
     productNames:{},
     person: {},
@@ -121,8 +123,14 @@ const ChatProvider = (props) => {
         sendData(['findProductName', payload])
     }
     const sendCreateProduct = (payload) => {
-        console.log("payyyyyyyyy",payload)
         sendData(['createProduct', payload ])
+    }
+    const sendUpdateProduct = (payload) => {
+        console.log(payload)
+        sendData(['updateProduct', payload ])
+    }
+    const sendDeleteProduct = (payload) => {
+        sendData(['deleteProduct', payload ])
     }
     const sendGetDashboardPosts = (sorttype, fromPostNum, theme,ci) => {
         setDashPostsIsLoading(true);
@@ -263,6 +271,8 @@ const ChatProvider = (props) => {
                 sendFindItemName,
                 sendFindProductName,
                 sendCreateProduct,
+                sendUpdateProduct,
+                sendDeleteProduct,
                 sendGetDashboardPosts,
                 DashboardPosts,
                 setDashboardPosts,

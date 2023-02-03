@@ -22,6 +22,10 @@ export default function CreatePost () {
     const [errorMessage, setErrorMessage] = useState('');
 
     const openMenu = (event) => {
+        const payload = {
+            user:person.mail,
+        }
+        sendFindItemName(payload);
         setAnchor(event.currentTarget);
     };
     const closeMenu = () => {
@@ -45,8 +49,12 @@ export default function CreatePost () {
     }
     const checkSelectedDelete = () =>{
         if(selected !== -1){
-            sendDeleteItem(itemNames[selected].itemname);
-            alert(itemNames[selected].itemname, "is deleted")
+            const payload = {
+                itemname :itemNames[selected].itemname,
+                user : person.mail,
+            }
+            sendDeleteItem(payload);
+            alert(itemNames[selected].itemname + " is deleted")
             setSelected(-1)
         }
         else {
@@ -79,15 +87,15 @@ export default function CreatePost () {
             description: itemDescription,
         }
         console.log(payload)
-        sendCreateItem(payload);
-        // cleanpage();
+        if(itemName !== '' && itemPrice !== '' && itemUnit !== ''){
+            sendCreateItem(payload);
+        }
         setErrorMessage('');
         alert("Item is created!");
         setItemName('')
         setItemPrice('')
         setItemUnit('')
         setItemDescription('')
-            // history.push('/app/dashboard');
     }
     const onSendUpdateItem = async () => {
         if(!itemName === -1 ){

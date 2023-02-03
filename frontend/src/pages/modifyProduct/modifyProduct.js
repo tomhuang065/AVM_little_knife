@@ -16,39 +16,62 @@ export default function CreatePost () {
     const [productPrice, setProductPrice] = useState('');
     const [productDescription, setProductDescription] = useState('');
     const [anchor, setAnchor] = useState(null); //for menu
-    const [selected, setSelected] = useState(-1); //selected index
-    const {sendCreatePost, sendCreateProduct, sendFindProductName, productNames, itemNames, person} = useChat();
+    const [productAnchor, setProductAnchor] = useState(null);
+    const [productSelected, setProductSelected] = useState(-1); //selected index
+    const [itemSelected, setItemSelected] = useState(-1); //selected index
+    const {sendUpdateProduct, sendCreateProduct, sendFindProductName, sendDeleteProduct, productNames, itemNames, person} = useChat();
     const [errorMessage, setErrorMessage] = useState('');
 
     const openMenu = (event) => {
         setAnchor(event.currentTarget);
     };
+    const openProductMenu = (event) => {
+        setProductAnchor(event.currentTarget);
+    };
     const closeMenu = () => {
         setAnchor(null);
     };
+    const closeProductMenu = () => {
+        setProductAnchor(null);
+    };
     const onMenuItemClick = (event, index) => {
         setAnchor(null);
-        setSelected(index);
+        setItemSelected(index);
+        
         // setItemName(itemNames[selected].itemname)
         // setItemPrice(itemNames[selected].price)
         // setItemDescription(itemNames[selected].description)
 
     }
-    const checkChoose = () =>{
-        if(selected !== -1){
+    const onMenuProductClick = (event, index) => {
+        setProductAnchor(null);
+        setProductSelected(index);
+        setItemList([])
+        setAmountList([])
+    }
+    const checkSelectedSubmit = () =>{
+        if(productSelected !== -1){
             onSendUpdateProduct();
         }
         else {
-            alert("Item not chosen")
+            alert("Product not chosen")
+        }
+    }
+    const checkSelectedDelete = () =>{
+        if(productSelected !== -1){
+            const payload = {
+                productname :productNames[productSelected].productname,
+                user : person.mail,
+            }
+            sendDeleteProduct(payload);
+            alert(productNames[productSelected].productname+" is deleted")
+            setProductSelected(-1)
+        }
+        else {
+            alert("Product not chosen")
         }
     }
     const onSendCreateProduct = async () => {
-        // const payload = {
-        //     user:person.mail,
-        // }
-        // sendFindItemName(payload);
-        // console.log(amountList)
-        // console.log(itemList)
         if(productName === '' || productPrice === '' ){
             setErrorMessage("Product name or product price is missing");
             throw console.error("Product name or product priceis missing");
@@ -69,7 +92,7 @@ export default function CreatePost () {
         }
         console.log(payload)
         if(productName !== '' && productPrice !== '' && itemList !== [] && amountList !== []){
-                    sendCreateProduct(payload);
+            sendCreateProduct(payload);
         }
 
         setErrorMessage('');
@@ -82,35 +105,24 @@ export default function CreatePost () {
             // history.push('/app/dashboard');
     }
     const onSendUpdateProduct = async () => {
-        // if(!itemName === -1 ){
-        //     setErrorMessage("Item name is missing");
-        //     throw console.error("Item name is missing");
-        // }
-        // if(!itemPrice === -1 ){
-        //     setErrorMessage("Item Price is missing");
-        //     throw console.error("Item Price is missing");
-        // }
-        // if(typeof(Number(itemPrice))!== 'number'){
-        //     setErrorMessage("Item Price is not a number");
-        //     throw console.error("Item Price is not a number");
-        // }
         const payload = {
             user:person.mail, 
-            productname : productNames[selected].productname,
-            newname : productName === ''?productNames[selected].productname:productName,
-            productprice: productPrice === ''?productNames[selected].productprice:productPrice,
-            description: productDescription=== ''?productNames[selected].description:productDescription,
-            // itemlist:,
-            // amountlist:,
-            // 修好下拉市選單機制
+            productname : productNames[productSelected].productname,
+            newname : productName === ''?productNames[productSelected].productname:productName,
+            productprice: productPrice === ''?productNames[productSelected].productprice:productPrice,
+            description: productDescription=== ''?productNames[productSelected].description:productDescription,
+            itemlist:productNames[productSelected].itemlist,
+            amountlist:productNames[productSelected].amountlist,
         }
         console.log(payload)
-        // sendUpdateItem(payload);
+        sendUpdateProduct(payload);
         setErrorMessage('');
         alert("Product is uploaded");
         setProductName('')
         setProductPrice('')
         setProductDescription('')
+        setItemSelected(-1);
+        setProductSelected(-1);
             // history.push('/app/dashboard');
     }
     const cleanpage = () =>{
@@ -118,6 +130,8 @@ export default function CreatePost () {
         setProductName('')
         setProductPrice('')
         setProductDescription('')
+        setItemSelected(-1);
+        setProductSelected(-1);
         const payload = {
             user:person.mail,
         }
@@ -128,6 +142,11 @@ export default function CreatePost () {
     }
     const getAmount = (event) => {
         setTmpAmount(event.target.value)
+        for(var i = 0; i < productNames[productSelected].itemlist.length; i ++){
+            if(tmpItem === productNames[productSelected].itemlist[i]){
+                productNames[productSelected].amountlist[i] = tmpAmount;
+            }
+        }
     }
 
     const addNewItem = () => {
@@ -143,6 +162,7 @@ export default function CreatePost () {
         }
         setTmpItem('');
         setTmpAmount('')
+        console.log(productNames[productSelected].amountlist)
     }
     return (
         <>
@@ -168,24 +188,24 @@ export default function CreatePost () {
                             <Grid item xs={12}>
                                 <Box>
                                     <Button
-                                        onClick={openMenu}
+                                        onClick={openProductMenu}
                                         color="primary"
                                         variant="contained"
                                     >
-                                    {selected === -1?'Choose Product':productNames[selected].productname}
+                                    {productSelected === -1?'Choose Product':productNames[productSelected].productname}
                                     </Button>
 
                                     <Menu
-                                        open={Boolean(anchor)}
-                                        anchorEl={anchor}
-                                        onClose={closeMenu}
+                                        open={Boolean(productAnchor)}
+                                        anchorEl={productAnchor}
+                                        onClose={closeProductMenu}
                                         keepMounted
                                     >
                                         {productNames.map((product, index) => (
                                         <MenuItem
                                             key={index}
-                                            onClick={(event) => onMenuItemClick(event, index)}
-                                            selected= {index === selected}
+                                            onClick={(event) => onMenuProductClick(event, index)}
+                                            selected= {index === productSelected}
                                         >
                                             {product.productname}
                                         </MenuItem>
@@ -214,16 +234,16 @@ export default function CreatePost () {
                                         onClick={openMenu}
                                         onChange={handleChange}
                                     >
-                                        {itemNames.map((item, index) => (
+                                        {productSelected !== -1? productNames[productSelected].itemlist.map((item, index) => (
                                             <MenuItem
-                                                value={item.itemname}
+                                                value={item}
                                                 key={index}
                                                 onClick={(event) => onMenuItemClick(event, index)}
-                                                selected= {index === selected}
+                                                selected= {index === itemSelected}
                                             >
-                                                {item.itemname}
+                                                {item}
                                             </MenuItem>
-                                        ))}
+                                        )):null}
                                     </Select>
                                 </FormControl>
                                 <TextField
@@ -233,7 +253,7 @@ export default function CreatePost () {
                                     onChange={getAmount}
                                     type="number"
                                 />
-                                <Button style = {{marginLeft:"20px", marginTop:"20px"}}onClick={ () => addNewItem() }>新增原料</Button>
+                                <Button style = {{marginLeft:"20px", marginTop:"20px"}}onClick={ () => addNewItem() }>變更耗用數量</Button>
                             </Grid>
                             <Grid item xs={12}>
                                 {itemList.map((item) => ( 
@@ -244,7 +264,8 @@ export default function CreatePost () {
                                 ))}
                             </Grid>
                             <Grid item xs={12}>
-                                <Button style = {{backgroudColor:"#e5e5e5", marginTop: "10px"}}onClick={ () => onSendCreateProduct() }>Submit</Button>
+                                <Button style = {{marginBottom:"20px", backgroundColor:"blue", color:"white"}}onClick={ () => checkSelectedSubmit() }>Submit</Button>
+                                <Button style = {{marginBottom:"20px", marginLeft:"20px", backgroundColor:"red", color:"white"}}onClick={ () => checkSelectedDelete() }>Delete</Button>
                                 <Typography variant="h5" sx={{color:"red"}}>
                                     {errorMessage}
                                 </Typography>
@@ -282,7 +303,7 @@ export default function CreatePost () {
                                                 value={item.itemname}
                                                 key={index}
                                                 onClick={(event) => onMenuItemClick(event, index)}
-                                                selected= {index === selected}
+                                                selected= {index === itemSelected}
                                             >
                                                 {item.itemname}
                                             </MenuItem>
