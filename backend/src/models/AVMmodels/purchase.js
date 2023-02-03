@@ -7,7 +7,7 @@ const PurchaseSchema = new mongoose.Schema({
     time:{type:Date, require:true}, 
     
     //items : the name of items bought
-    items: [{ type : mongoose.Types.ObjectId, ref: 'Item', required:true}],
+    items: [{ type:String, required:true}],
 
     //amounts: the amount of items bought, corresponding to items
     amounts: [{type:Number, require:true}],

@@ -83,19 +83,31 @@ const createItem = async (payload, ws) => {
 const updateItem = async (payload, ws) => {
     // console.log(payload)
     const UpdateItem = await ItemModel.findOneAndUpdate(
-        {itemname:payload.itemname}, {$set:{itemname:payload.newname, price:payload.price, description:payload.description}}
+        {itemname:payload.itemname, user : payload.user}, {$set:{itemname:payload.newname, price:payload.price, description:payload.description}}
     );
 }
 const deleteItem = async (payload, ws) => {
     // console.log(payload)
-    const UpdateItem = await ItemModel.findOneAndDelete(
-        {itemname:payload}
+    const deleteItem = await ItemModel.findOneAndDelete(
+        {itemname:payload.itemname, user:payload.user}
     );
 }
 const createProduct = async (payload, ws) => {
     console.log(payload)
     const newProduct = await new ProductModel(payload);
     await newProduct.save();
+}
+const updateProduct = async (payload, ws) => {
+    // console.log(payload)
+    const UpdateProduct = await ProductModel.findOneAndUpdate(
+        {productname:payload.productname, user : payload.user}, {$set:{productname:payload.newname, productprice:payload.productprice, description:payload.description, itemlist:payload.itemlist, amountlist:payload.amountlist}}
+    );
+}
+const deleteProduct = async (payload, ws) => {
+    // console.log(payload)
+    const deleteProduct = await ProductModel.findOneAndDelete(
+        {productname:payload.productname, user:payload.user}
+    );
 }
 const findItemName = async (payload, ws) => {
     const itemlist = await ItemModel.find({user : payload.user});
@@ -208,6 +220,15 @@ export default {
                 }
                 case 'createProduct': {
                     createProduct(payload, ws);
+                    break;
+                }
+                case 'deleteProduct':{
+                    deleteProduct(payload, ws);
+                    break;
+                }
+                case 'updateProduct': {
+                    // console.log("createpostdata",  payload);
+                    updateProduct(payload, ws);
                     break;
                 }
                 case 'findItemName':{

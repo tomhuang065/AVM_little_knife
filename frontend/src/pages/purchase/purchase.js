@@ -9,7 +9,7 @@ export default function CreatePost () {
     const history = useHistory();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const [hashtag, setHashtag] = useState('#');
+    const [hashtag, setHashtag] = useState('');
     const [anchor, setAnchor] = useState(null); //for menu
     const [selected, setSelected] = useState(-1); //selected index
     const [selectedImage, setSelectedImage] = useState(null);
@@ -87,13 +87,19 @@ export default function CreatePost () {
                 <Container sx={{bgcolor: '#edfcfa'}}>
                     <Grid container spacing={4}>
                         <Grid item xs={12}>
-                            <TextField inputProps={{maxLength:30}} fullWidth value={title} placeholder="Title... " onChange={e => setTitle(e.target.value)}/>                
+                            <TextField inputProps={{maxLength:30}} fullWidth value={title} placeholder="購入日期" onChange={e => setTitle(e.target.value)}/>                
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField fullWidth multiline value={content} placeholder="Content... " onChange={e => setContent(e.target.value)}/>
+                            <TextField inputProps={{maxLength:30}} fullWidth value={title} placeholder="原料名稱" onChange={e => setTitle(e.target.value)}/>                
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField fullWidth inputProps={{maxLength:20}} value={hashtag} placeholder="#Hashtag... " onChange={e => setHashtag(e.target.value)}/>
+                            <TextField fullWidth multiline value={content} placeholder="購入數量 " onChange={e => setContent(e.target.value)}/>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField fullWidth inputProps={{maxLength:20}} value={hashtag} placeholder="價值標的" onChange={e => setHashtag(e.target.value)}/>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField fullWidth inputProps={{maxLength:20}} value={hashtag} placeholder="原料描述" onChange={e => setHashtag(e.target.value)}/>
                         </Grid>
                         <Grid item xs={12}>
                             <Box>
