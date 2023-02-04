@@ -3,6 +3,7 @@ import PostModel from './models/post.js';
 import SubCommentModel from './models/subcomment.js';
 import ItemModel from './models/AVMmodels/item.js';
 import ProductModel from './models/AVMmodels/product.js'
+import PurchaseModel from './models/AVMmodels/purchase.js'
 import mongoose, { get } from 'mongoose';
 import { compareSync } from 'bcryptjs';
 
@@ -118,6 +119,11 @@ const findProductName = async (payload, ws) => {
     const productlist = await ProductModel.find({user : payload.user});
     console.log(productlist);
     sendData(['getProductName', {List:productlist}], ws)
+}
+const createPurchase = async (payload, ws) => {
+    console.log(payload)
+    const newPurchase = await new PurchaseModel(payload);
+    await newPurchase.save();
 }
 const getPostsFromDB = async (payload, ws) => {
     const {sorttype, fromPostNum, theme} = payload;
@@ -238,6 +244,10 @@ export default {
                 case 'findProductName':{
                     // console.log(payload)
                     findProductName(payload, ws);
+                }
+                case 'createPurchase': {
+                    createPurchase(payload, ws);
+                    break;
                 }
                 case 'getDashboardPosts': {
                     const Posts = await getPostsFromDB(payload, ws);

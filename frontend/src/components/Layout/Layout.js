@@ -22,6 +22,7 @@ import purchase from "../../pages/purchase/purchase";
 import modifyItem from "../../pages/modifyItem/modifyItem";
 import modifyProduct from "../../pages/modifyProduct/modifyProduct";
 import stock from "../../pages/stock/stock";
+import statistics from "../../pages/statistics/statistics";
 
 // context
 import { useLayoutState } from "../../context/LayoutContext";
@@ -50,6 +51,7 @@ function Layout(props) {
               <Route path="/app/purchase" component={purchase}/>
               <Route path="/app/modifyitem" component={modifyItem} />
               <Route path="/app/stock" component={stock} />
+              <Route path="/app/statistics" component={statistics} />
               <Route path="/app/modifyproduct" component={modifyProduct} />
               <Route path="/app/post/:post_id" component={Notifications}  />
               

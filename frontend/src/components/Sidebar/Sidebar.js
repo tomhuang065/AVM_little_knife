@@ -37,6 +37,7 @@ const structure = [
   { id: 18, label: "原料資訊", link: "/app/modifyitem", icon: <CategoryIcon/>},
   { id: 19, label: "產品資訊", link: "/app/modifyproduct", icon: <InventoryIcon/>},
   { id: 20, label: "庫存", link: "/app/stock", icon: <InventoryIcon/>},
+  { id: 21, label: "統計與報表", link: "/app/statistics", icon: <InventoryIcon/>},
 
 
 

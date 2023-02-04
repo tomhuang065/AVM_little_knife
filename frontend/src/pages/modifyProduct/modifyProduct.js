@@ -315,6 +315,7 @@ export default function CreatePost () {
                                     id="outlined-number"
                                     placeholder="耗用數量"
                                     onChange={getAmount}
+                                    
                                     type="number"
                                 />
                                 <Button style = {{marginLeft:"20px", marginTop:"20px"}}onClick={ () => addNewItem() }>新增原料</Button>

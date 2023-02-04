@@ -30,6 +30,7 @@ const ChatContext = createContext({
     sendCreateProduct:() => {},
     sendUpdateProduct: ()=>{},
     sendDeleteProduct: ()=>{},
+    sendCreatePurchase:() => {},
     itemNames:{},
     productNames:{},
     person: {},
@@ -58,14 +59,11 @@ const ChatContext = createContext({
 });
 
 const allTheme = [
-    "NTU",
-    "Politics",
-    "Feelings",
-    "Jobs",
-    "Relationship",
-    "Nothing",
-    "Sports",
-    "Drama"
+    "價值標的一",
+    "價值標的二",
+    "價值標的三",
+    "價值標的四",
+    "價值標的五"
 ] 
 const ChatProvider = (props) => {
     var userDispatch = useUserDispatch();
@@ -131,6 +129,9 @@ const ChatProvider = (props) => {
     }
     const sendDeleteProduct = (payload) => {
         sendData(['deleteProduct', payload ])
+    }
+    const sendCreatePurchase = (payload) => {
+        sendData(['createPurchase', payload ])
     }
     const sendGetDashboardPosts = (sorttype, fromPostNum, theme,ci) => {
         setDashPostsIsLoading(true);
@@ -273,6 +274,7 @@ const ChatProvider = (props) => {
                 sendCreateProduct,
                 sendUpdateProduct,
                 sendDeleteProduct,
+                sendCreatePurchase,
                 sendGetDashboardPosts,
                 DashboardPosts,
                 setDashboardPosts,

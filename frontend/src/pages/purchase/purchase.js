@@ -1,34 +1,42 @@
-import { Box, Button, Grid, Paper, TextField, Menu, MenuItem, Container, Typography } from "@mui/material";
+import { Box, Button, Grid, Paper, TextField, Menu, MenuItem, Container, Typography ,InputLabel,FormHelperText,FormControl,Select} from "@mui/material";
 import PageTitle from "../../components/PageTitle/PageTitle";
 import { useState,useEffect } from "react";
 import { useChat } from "../../context/OurContext";
 import { useHistory } from "react-router-dom"
+import { DesktopDatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 export default function CreatePost () {
 
     const history = useHistory();
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
-    const [hashtag, setHashtag] = useState('');
-    const [anchor, setAnchor] = useState(null); //for menu
+    const date = new Date();
+    const [value, setValue] = useState(dayjs(date));
+    const [tmpAmount, setTmpAmount] = useState(0);
+    const [comment, setComment] = useState('');
+    const [anchor, setAnchor] = useState(null); //for menu of item
+    const [objAnchor, setObjAnchor] = useState(null); //for menu
     const [selected, setSelected] = useState(-1); //selected index
+    const [tmpObj, setTmpObj] = useState('')
+    const [objSelected, setObjSelected] = useState(-1)
     const [selectedImage, setSelectedImage] = useState(null);
-    const {sendCreatePost, person, allTheme, jumpDash, setJumpDash, jumpPostId} = useChat();
+    const {sendCreatePurchase, person, itemNames, allTheme, jumpDash, setJumpDash, jumpPostId} = useChat();
     const [errorMessage, setErrorMessage] = useState('');
-    // const allTheme = [
-    //     'Feelings', 'Politics', 'DailyLife'
-    // ]
-    console.log("in createpost")
-    // useEffect(() => {
-    //     if(jumpDash === true){
-    //         // history.push('/app/post/'+jumpPostId);
-    //         history.push('/app/dashboard');
-    //         setJumpDash(false);
-    //     }
-    // }, [jumpDash]);
 
+    const handleChange = (newValue) => {
+        setValue(newValue);
+        console.log(newValue)
+    };
+    const handleObjChange = (event) => {
+        setTmpObj(event.target.value);
+        console.log(tmpObj)
+    };
     const openMenu = (event) => {
         setAnchor(event.currentTarget);
+    };
+    const openObjMenu = (event) => {
+        setObjAnchor(event.currentTarget);
     };
     const closeMenu = () => {
         setAnchor(null);
@@ -37,34 +45,39 @@ export default function CreatePost () {
         setAnchor(null);
         setSelected(index);
     }
-    const onSendCreatePost = async () => {
-        console.log("person: ",person._id);
-        if(!title || !content || selected === -1 ){
-            setErrorMessage("Some field missing");
-            throw console.error("Some field missing");
+    const onMenuObjClick = (event, index) => {
+        setObjAnchor(null);
+        setObjSelected(index);
+    }
+    const onSendCreatePurchase = async () => {
+
+        const purchasePayload = {
+            user:person.mail,
+            time: value,
+            item:itemNames[selected].itemname,
+            amount: tmpAmount,
+            comment: comment,
+            objective:tmpObj,
+      
         }
-        const base64 = selectedImage? await convertToBase64(selectedImage) : '';
-        console.log("img base64: ", base64);
-        const payload = {
-            poster: person._id,
-            title: title,
-            post_time: new Date(),
-            post_content: content,
-            theme: allTheme[selected],
-            picture: base64,
-            like:0,
-            dislike:0,
-            commentcount:0
+        console.log(purchasePayload)
+        sendCreatePurchase(purchasePayload);
+        const itemPayload = {
+            user:person.mail,
+            price:itemNames[selected].price,
+            itemname:itemNames[selected].itemname,
+            unit:itemNames[selected].unit,
+            amount: tmpAmount,
         }
-        sendCreatePost(payload);
+        console.log(itemPayload)
+        // sendUpdateItem(purchasePayload);
         setErrorMessage('');
-        alert("Your post is being uploaded!");
-            history.push('/app/dashboard');
-            // setTitle('');
-        // setContent('');
-        // setHashtag('#');
-        // setSelected(-1);
-        // setSelectedImage(null);
+        alert("Purchase uploaded!");
+            // history.push('/app/dashboard');
+        setTmpObj('');
+        setTmpAmount(0);
+        setComment('');
+        setSelected(-1);
 
     }
     function convertToBase64(file) {
@@ -79,83 +92,97 @@ export default function CreatePost () {
             }
         })
     }
+    const getAmount = (event) =>{
+        setTmpAmount(event.target.value)
+    }
     return (
         // <Box>abcd</Box>
         <>
-            <PageTitle title="購入原料"/>
+            <PageTitle title="購原料"/>
             <Paper>
                 <Container sx={{bgcolor: '#edfcfa'}}>
                     <Grid container spacing={4}>
-                        <Grid item xs={12}>
-                            <TextField inputProps={{maxLength:30}} fullWidth value={title} placeholder="購入日期" onChange={e => setTitle(e.target.value)}/>                
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField inputProps={{maxLength:30}} fullWidth value={title} placeholder="原料名稱" onChange={e => setTitle(e.target.value)}/>                
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField fullWidth multiline value={content} placeholder="購入數量 " onChange={e => setContent(e.target.value)}/>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField fullWidth inputProps={{maxLength:20}} value={hashtag} placeholder="價值標的" onChange={e => setHashtag(e.target.value)}/>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField fullWidth inputProps={{maxLength:20}} value={hashtag} placeholder="原料描述" onChange={e => setHashtag(e.target.value)}/>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Box>
-                                <Button
-                                    onClick={openMenu}
-                                    color="primary"
-                                    variant="contained"
-                                >
-                                {selected === -1?'Choose Theme':allTheme[selected]}
-                                </Button>
-
-                                <Menu
-                                    open={Boolean(anchor)}
-                                    anchorEl={anchor}
-                                    onClose={closeMenu}
-                                    keepMounted
-                                >
-                                    {allTheme.map((option, index) => (
-                                    <MenuItem
-                                        key={index}
-                                        onClick={(event) => onMenuItemClick(event, index)}
-                                        selected= {index === selected}
-                                    >
-                                        {option}
-                                    </MenuItem>
-                                    ))}
-                                </Menu>
-                            </Box>
-                        </Grid>
-
-                        <Grid item xs={12}>
-                            <div style ={{marginTop:"2%", marginBottom:"0.5%" ,color:"#838383" , fontFamily:"courier"}}>Please select one image here</div>
-                            {selectedImage && (
-                                <Box >
+                        <Grid item xs={12} style = {{marginLeft:"11px"}}>
+                            <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                <DesktopDatePicker
                                     
-                                    <img alt="not fount" width={"1024px"} src={URL.createObjectURL(selectedImage)} />
-                                    <br />
-                                    <Button onClick={()=>setSelectedImage(null)}>Remove</Button>
+                                    label= "Date"
+                                    inputFormat="MM/DD/YYYY"
+                                    placeholder="date"
+                                    value={value}
+                                    onChange={handleChange}
+                                    renderInput={(params) => <TextField {...params} />}
+                                />   
+                            </LocalizationProvider>          
+                        </Grid>
+                        <Grid item xs={12}>
+                                <Box style = {{marginLeft:"11px"}}>
+                                    <Button
+                                        onClick={openMenu}
+                                        color="primary"
+                                        variant="outlined"
+                                    >
+                                    {selected === -1?'Choose Item':itemNames[selected].itemname}
+                                    </Button>
+
+                                    <Menu
+                                        open={Boolean(anchor)}
+                                        anchorEl={anchor}
+                                        onClose={closeMenu}
+                                        keepMounted
+                                    >
+                                        {itemNames.map((item, index) => (
+                                        <MenuItem
+                                            key={index}
+                                            onClick={(event) => onMenuItemClick(event, index)}
+                                            selected= {index === selected}
+                                        >
+                                            {item.itemname}
+                                        </MenuItem>
+                                        ))}
+                                    </Menu>
                                 </Box>
-                            )}
-                            {/* <br />
-                            
-                            <br />  */}
-                            <input
-                                type="file"
-                                name="myImage"
-                                onChange={(event) => {
-                                    console.log(event.target.files[0]);
-                                    setSelectedImage(event.target.files[0]);
-                                }}
+                            </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                style = {{marginLeft:"10px", marginTop:"8px" , width:"270px"}}
+                                id="outlined-number"
+                                placeholder="耗用數量"
+                                onChange={getAmount}
+                                value = {tmpAmount}
+                                type="number"
                             />
                         </Grid>
-
-
+                        <Grid item xs={12} >
+                            <FormControl sx={{ m: 1, minWidth: 120 }} style = {{width:"270px"}}>
+                                <InputLabel style = {{color:"#aeb8b7"}}>價值標的</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-helper-label"
+                                    id="demo-simple-select-helper"
+                                    // value= {selected === -1?'原料名稱':itemNames[selected].itemname}
+                                    value = {tmpObj}
+                                    label="價值標的"
+                                    onClick={openObjMenu}
+                                    onChange={handleObjChange}
+                                >
+                                    {allTheme.map((item, index) => (
+                                        <MenuItem
+                                            value={item}
+                                            key={index}
+                                            onClick={(event) => onMenuObjClick(event, index)}
+                                            selected= {index === objSelected}
+                                        >
+                                            {item}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
                         <Grid item xs={12}>
-                            <Button onClick={ () => onSendCreatePost() }>Submit</Button>
+                            <TextField fullWidth inputProps={{maxLength:20}} value={comment} placeholder="購買補充" onChange={e => setComment(e.target.value)}/>
+                        </Grid>
+                        <Grid item xs={12} style = {{marginBottom:"20px"}}>
+                            <Button onClick={ () => onSendCreatePurchase()}>Submit</Button>
                             <Typography variant="h5" sx={{color:"red"}}>
                                 {errorMessage}
                             </Typography>
