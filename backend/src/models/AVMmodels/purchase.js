@@ -10,7 +10,7 @@ const PurchaseSchema = new mongoose.Schema({
     item: { type:String, required:true},
 
     //amounts: the amount of items bought, corresponding to items
-    amounts: {type:Number, require:true},
+    amount: {type:Number, require:true},
 
     //comment: comment of the purchase
     comment:{type:String },
@@ -20,6 +20,9 @@ const PurchaseSchema = new mongoose.Schema({
 
     //user: the user who create the post
     user:{ type: String },
+
+    //total : the total price of the purchase,
+    total:{type:Number, required:true}
     
 });
 

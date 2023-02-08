@@ -33,8 +33,9 @@ const ChatContext = createContext({
     sendCreatePurchase:() => {},
     itemNames:{},
     productNames:{},
+    purchaseNames:{},
     person: {},
-    sendGetDashboardPosts:() =>{},
+    sendGetPurchases:() =>{},
     DashboardPosts: [],
     currentLocation: '',
     sendGetNotificationPost: () => {},
@@ -73,6 +74,7 @@ const ChatProvider = (props) => {
     const [person, setPerson] = useState({});
     const [itemNames, setItemNames] = useState([]);
     const [productNames, setProductNames] = useState([]);
+    const [purchaseNames, setPurchaseNames] = useState([]);
     const [DashboardPosts, setDashboardPosts] = useState([]);
     const [currentLocation, setCurrentLocation] = useState('');
     const [NotificationPost, setNotificationPost] = useState({});
@@ -133,10 +135,8 @@ const ChatProvider = (props) => {
     const sendCreatePurchase = (payload) => {
         sendData(['createPurchase', payload ])
     }
-    const sendGetDashboardPosts = (sorttype, fromPostNum, theme,ci) => {
-        setDashPostsIsLoading(true);
-        setCir(ci)
-        sendData(['getDashboardPosts', {sorttype, fromPostNum, theme}]);
+    const sendGetPurchases = (payload) => {
+        sendData(['getPurchases', payload]);
     }
     const sendGetNotificationPost = (_id) => {
         sendData(['getNotificationPost',{_id}])
@@ -163,6 +163,10 @@ const ChatProvider = (props) => {
             case 'getProductName':{
                 console.log(payload.List)
                 setProductNames(payload.List)
+            }
+            case 'getPurchase':{
+                setPurchaseNames(payload.List)
+
             }
             case "signInStatus": {
                 if(payload.status===true){
@@ -197,6 +201,7 @@ const ChatProvider = (props) => {
                 // }
                 break;
             }
+            
             case "dashboardPosts": {
                 const {posts} = payload;
                 if(posts!=undefined){
@@ -266,6 +271,7 @@ const ChatProvider = (props) => {
                 person,
                 itemNames,
                 productNames,
+                purchaseNames,
                 sendCreateItem,
                 sendUpdateItem,
                 sendDeleteItem,
@@ -275,7 +281,7 @@ const ChatProvider = (props) => {
                 sendUpdateProduct,
                 sendDeleteProduct,
                 sendCreatePurchase,
-                sendGetDashboardPosts,
+                sendGetPurchases,
                 DashboardPosts,
                 setDashboardPosts,
                 currentLocation,setCurrentLocation,

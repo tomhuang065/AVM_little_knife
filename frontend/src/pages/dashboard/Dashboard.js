@@ -31,7 +31,7 @@ export default function Dashboard (props) {
     if(currentLocation === '/app/dashboard'){
       setDashboardPosts([]);
       setShow_number(0);
-      sendGetDashboardPosts(sort, 0, selectTheme,true);
+      // sendGetDashboardPosts(sort, 0, selectTheme,true);
     }
   }, [currentLocation,sort,selectTheme]);
   console.log("get post", DashboardPosts)

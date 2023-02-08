@@ -21,7 +21,7 @@ export default function CreatePost () {
     const [tmpObj, setTmpObj] = useState('')
     const [objSelected, setObjSelected] = useState(-1)
     const [selectedImage, setSelectedImage] = useState(null);
-    const {sendCreatePurchase, person, itemNames, allTheme, jumpDash, setJumpDash, jumpPostId} = useChat();
+    const {sendCreatePurchase, sendUpdateItem, person, itemNames, allTheme, jumpDash, setJumpDash, jumpPostId} = useChat();
     const [errorMessage, setErrorMessage] = useState('');
 
     const handleChange = (newValue) => {
@@ -50,7 +50,7 @@ export default function CreatePost () {
         setObjSelected(index);
     }
     const onSendCreatePurchase = async () => {
-
+        
         const purchasePayload = {
             user:person.mail,
             time: value,
@@ -58,6 +58,7 @@ export default function CreatePost () {
             amount: tmpAmount,
             comment: comment,
             objective:tmpObj,
+            total: itemNames[selected].price*tmpAmount, 
       
         }
         console.log(purchasePayload)
@@ -66,11 +67,13 @@ export default function CreatePost () {
             user:person.mail,
             price:itemNames[selected].price,
             itemname:itemNames[selected].itemname,
-            unit:itemNames[selected].unit,
-            amount: tmpAmount,
+            // unit:itemNames[selected].unit,
+            newname:itemNames[selected].itemname,
+            description:itemNames[selected].description,
+            amount: itemNames[selected].amount + tmpAmount,
         }
         console.log(itemPayload)
-        // sendUpdateItem(purchasePayload);
+        sendUpdateItem(itemPayload);
         setErrorMessage('');
         alert("Purchase uploaded!");
             // history.push('/app/dashboard');

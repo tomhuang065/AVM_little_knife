@@ -84,7 +84,7 @@ const createItem = async (payload, ws) => {
 const updateItem = async (payload, ws) => {
     // console.log(payload)
     const UpdateItem = await ItemModel.findOneAndUpdate(
-        {itemname:payload.itemname, user : payload.user}, {$set:{itemname:payload.newname, price:payload.price, description:payload.description}}
+        {itemname:payload.itemname, user : payload.user}, {$set:{itemname:payload.newname, price:payload.price, description:payload.description, amount:payload.amount}}
     );
 }
 const deleteItem = async (payload, ws) => {
@@ -124,6 +124,10 @@ const createPurchase = async (payload, ws) => {
     console.log(payload)
     const newPurchase = await new PurchaseModel(payload);
     await newPurchase.save();
+}
+const getPurchases = async (payload, ws) =>{
+    const purchaseList = await PurchaseModel.find({user: payload.user})
+    sendData(['getPurchase', {List:purchaseList}], ws)
 }
 const getPostsFromDB = async (payload, ws) => {
     const {sorttype, fromPostNum, theme} = payload;
@@ -249,8 +253,8 @@ export default {
                     createPurchase(payload, ws);
                     break;
                 }
-                case 'getDashboardPosts': {
-                    const Posts = await getPostsFromDB(payload, ws);
+                case 'getPurchases': {
+                    const post = await getPurchases(payload, ws);
                     break;
 
                 }

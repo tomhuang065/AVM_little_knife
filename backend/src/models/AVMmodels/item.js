@@ -9,7 +9,7 @@ const ItemSchema = new mongoose.Schema({
     price:{ type:Number, required: true},
 
     //amount : the number ot the item left, initialized as zero
-    amount:{type:String},
+    amount:{type:Number},
 
     //unit : the unit of the product
     unit:{type:String, required:true},

@@ -141,14 +141,28 @@ export default function CreatePost () {
         setTmpItem(event.target.value)
     }
     const getAmount = (event) => {
-        setTmpAmount(event.target.value)
-        for(var i = 0; i < productNames[productSelected].itemlist.length; i ++){
-            if(tmpItem === productNames[productSelected].itemlist[i]){
-                productNames[productSelected].amountlist[i] = tmpAmount;
+        if(typeof(event)!== "undefined"){
+            setTmpAmount(event.target.value)
+        }
+        if(renew){
+            for(var i = 0; i < productNames[productSelected].itemlist.length; i ++){
+                if(tmpItem === productNames[productSelected].itemlist[i]){
+                    productNames[productSelected].amountlist[i] = tmpAmount;
+                }
             }
         }
+        
     }
-
+    const stats = () => {
+        for(var i = 0; i < productNames[productSelected].itemlist.length; i ++){
+            if(tmpItem === productNames[productSelected].itemlist[i]){
+                if(tmpAmount !== 0){
+                    alert("New Amount of "+productNames[productSelected].itemlist[i]+ " : "+ tmpAmount)
+                }
+            }
+        }
+        
+    }
     const addNewItem = () => {
         if(tmpItem === ''){
             alert("Item is missing")
@@ -162,7 +176,7 @@ export default function CreatePost () {
         }
         setTmpItem('');
         setTmpAmount('')
-        console.log(productNames[productSelected].amountlist)
+        // console.log(productNames[productSelected].amountlist)
     }
     return (
         <>
@@ -250,10 +264,11 @@ export default function CreatePost () {
                                     style = {{marginLeft:"10px", marginTop:"8px"}}
                                     id="outlined-number"
                                     placeholder="耗用數量"
+                                    value ={tmpAmount}
                                     onChange={getAmount}
                                     type="number"
                                 />
-                                <Button style = {{marginLeft:"20px", marginTop:"20px"}}onClick={ () => addNewItem() }>變更耗用數量</Button>
+                                <Button style = {{marginLeft:"20px", marginTop:"20px"}}onClick={() => stats() }>變更耗用數量</Button>
                             </Grid>
                             <Grid item xs={12}>
                                 {itemList.map((item) => ( 

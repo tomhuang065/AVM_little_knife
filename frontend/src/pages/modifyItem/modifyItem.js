@@ -85,6 +85,7 @@ export default function CreatePost () {
             unit:itemUnit,
             price: itemPrice,
             description: itemDescription,
+            amount:0,
         }
         console.log(payload)
         if(itemName !== '' && itemPrice !== '' && itemUnit !== ''){
@@ -119,6 +120,7 @@ export default function CreatePost () {
             newname : itemName === ''?itemNames[selected].itemname:itemName,
             price: itemPrice === ''?itemNames[selected].price:itemPrice,
             description: itemDescription=== ''?itemNames[selected].description:itemDescription,
+            amount:itemNames[selected].amount,
         }
         console.log(payload)
         sendUpdateItem(payload);
