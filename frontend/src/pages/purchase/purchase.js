@@ -63,6 +63,8 @@ export default function CreatePost () {
         }
         console.log(purchasePayload)
         sendCreatePurchase(purchasePayload);
+        // var num = itemNames[selected].amount + tmpAmount
+        // console.log(num)
         const itemPayload = {
             user:person.mail,
             price:itemNames[selected].price,
@@ -70,7 +72,7 @@ export default function CreatePost () {
             // unit:itemNames[selected].unit,
             newname:itemNames[selected].itemname,
             description:itemNames[selected].description,
-            amount: itemNames[selected].amount + tmpAmount,
+            amount: Number(itemNames[selected].amount) + Number(tmpAmount),
         }
         console.log(itemPayload)
         sendUpdateItem(itemPayload);
