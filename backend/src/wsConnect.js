@@ -4,6 +4,7 @@ import SubCommentModel from './models/subcomment.js';
 import ItemModel from './models/AVMmodels/item.js';
 import ProductModel from './models/AVMmodels/product.js'
 import PurchaseModel from './models/AVMmodels/purchase.js'
+import ProfitModel from './models/AVMmodels/profit.js'
 import mongoose, { get } from 'mongoose';
 import { compareSync } from 'bcryptjs';
 
@@ -124,6 +125,11 @@ const createPurchase = async (payload, ws) => {
     console.log(payload)
     const newPurchase = await new PurchaseModel(payload);
     await newPurchase.save();
+}
+const createProfit = async (payload, ws) => {
+    console.log("profit", payload)
+    const newProfit = await new ProfitModel(payload);
+    await newProfit.save();
 }
 const getPurchases = async (payload, ws) =>{
     const purchaseList = await PurchaseModel.find({user: payload.user})
@@ -251,6 +257,10 @@ export default {
                 }
                 case 'createPurchase': {
                     createPurchase(payload, ws);
+                    break;
+                }
+                case 'createProfit': {
+                    createProfit(payload, ws);
                     break;
                 }
                 case 'getPurchases': {

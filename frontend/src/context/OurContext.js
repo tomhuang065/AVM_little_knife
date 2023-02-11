@@ -31,6 +31,7 @@ const ChatContext = createContext({
     sendUpdateProduct: ()=>{},
     sendDeleteProduct: ()=>{},
     sendCreatePurchase:() => {},
+    sendCreateProfit:() => {},
     itemNames:{},
     productNames:{},
     purchaseNames:{},
@@ -134,6 +135,10 @@ const ChatProvider = (props) => {
     }
     const sendCreatePurchase = (payload) => {
         sendData(['createPurchase', payload ])
+    }
+    const sendCreateProfit = (payload) => {
+        console.log(payload)
+        sendData(['createProfit', payload ])
     }
     const sendGetPurchases = (payload) => {
         sendData(['getPurchases', payload]);
@@ -281,6 +286,7 @@ const ChatProvider = (props) => {
                 sendUpdateProduct,
                 sendDeleteProduct,
                 sendCreatePurchase,
+                sendCreateProfit,
                 sendGetPurchases,
                 DashboardPosts,
                 setDashboardPosts,

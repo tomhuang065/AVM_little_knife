@@ -13,17 +13,17 @@ export default function CreatePost () {
     const history = useHistory();
     var [sort, setSort] = useState(false); 
     const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
+    const [amount, setAmount] = useState('');
+    const [description, setDescription] = useState('');
     const [hashtag, setHashtag] = useState('#');
     const [anchor, setAnchor] = useState(null); //for menu
     const [selected, setSelected] = useState(-1); //selected index
     const [selectedImage, setSelectedImage] = useState(null);
-    const {sendCreatePost, person, allTheme, jumpDash, setJumpDash, jumpPostId} = useChat();
+    const {sendCreatePost, sendFindProductName, sendCreateProfit, sendUpdateItem, person, allTheme, productNames, itemNames, jumpDash, setJumpDash, jumpPostId} = useChat();
     const [errorMessage, setErrorMessage] = useState('');
     // const allTheme = [
     //     'Feelings', 'Politics', 'DailyLife'
     // ]
-    console.log("in createpost")
     // useEffect(() => {
     //     if(jumpDash === true){
     //         // history.push('/app/post/'+jumpPostId);
@@ -32,16 +32,29 @@ export default function CreatePost () {
     //     }
     // }, [jumpDash]);
     const date = new Date();
-    console.log(date)
-    const [value, setValue] = useState(dayjs(date));
+    // console.log(date)
+    const [time, setTime] = useState(dayjs(date));
 
     const handleChange = (newValue) => {
-        setValue(newValue);
+        setTime(newValue);
     };
 
     const openMenu = (event) => {
         setAnchor(event.currentTarget);
+        const payload = {
+            user:person.mail,
+        }
+        // console.log(payload)
+        sendFindProductName(payload);    
     };
+    // const showproduct = () => {
+    //     setShowProduct(!showProduct)
+    //     const payload = {
+    //         user:person.mail,
+    //     }
+    //     // console.log(payload)
+    //     sendFindProductName(payload);    
+    // }
     const closeMenu = () => {
         setAnchor(null);
     };
@@ -49,29 +62,21 @@ export default function CreatePost () {
         setAnchor(null);
         setSelected(index);
     }
-    const onSendCreatePost = async () => {
-        console.log("person: ",person._id);
-        if(!title || !content || selected === -1 ){
-            setErrorMessage("Some field missing");
-            throw console.error("Some field missing");
-        }
-        const base64 = selectedImage? await convertToBase64(selectedImage) : '';
-        console.log("img base64: ", base64);
+    const onSendCreateProfit = async () => {
+        
         const payload = {
-            poster: person._id,
-            title: title,
-            post_time: new Date(),
-            post_content: content,
-            theme: allTheme[selected],
-            picture: base64,
-            like:0,
-            dislike:0,
-            commentcount:0
+            productname:productNames[selected].productname,
+            total: Number(productNames[selected].productprice)*Number(amount),
+            amount:amount,
+            time:time,
+            description:description,
+            user:person.mail,
         }
-        sendCreatePost(payload);
+        console.log(payload)
+        sendCreateProfit(payload);
         setErrorMessage('');
-        alert("Your post is being uploaded!");
-            history.push('/app/dashboard');
+        // alert("Your post is being uploaded!");
+        //     history.push('/app/dashboard');
             // setTitle('');
         // setContent('');
         // setHashtag('#');
@@ -79,23 +84,34 @@ export default function CreatePost () {
         // setSelectedImage(null);
 
     }
-    function convertToBase64(file) {
-        return new Promise((resolve, reject) => {
-            const fileReader = new FileReader();
-            fileReader.readAsDataURL(file);
-            fileReader.onload = () => {
-                resolve(fileReader.result);
-            };
-            fileReader.onerror = (error) => {
-                reject(error);
+    const dealItem = async () =>{
+        for(var i = 0; i < productNames[selected].itemlist.length; i++){
+            for(var j = 0; j < itemNames.length; j++){
+                if(productNames[selected].itemlist[i] === itemNames[j].itemname){
+                    const payload = {
+                        itemname:itemNames[j].itemname,
+                        price:itemNames[j].price,
+                        amount:Number(itemNames[j].amount) - Number(productNames[selected].amountlist[i]),
+                        unit:itemNames[j].unit,
+                        user:person.mail,
+                    }
+                    console.log(payload)
+                    sendUpdateItem(payload)
+                }
             }
-        })
-    };
+        }
+    }
 
     const checkclick = () =>{
         setSort(!sort)
         console.log("clicked")
         console.log(sort)
+    }
+    const checkSelected = () =>{
+        if(selected !== -1){
+            dealItem()
+            onSendCreateProfit()
+        }
     }
     return (
         // <Box>abcd</Box>
@@ -117,12 +133,37 @@ export default function CreatePost () {
                     </div>
                 }
             />
-            {sort === true? 
+            {!sort === true? 
                 <Paper >
                     <Container sx={{bgcolor: '#edfcfa'}}>
                         <Grid container spacing={4}>
                             <Grid item xs={12}>
-                                <TextField inputProps={{maxLength:30}} fullWidth value={title} placeholder="Product name (originally : title) " onChange={e => setTitle(e.target.value)}/>                
+                                <Box>
+                                    <Button
+                                        onClick={openMenu}
+                                        color="primary"
+                                        variant="outlined"
+                                    >
+                                    {selected === -1?'Choose Product':productNames[selected].productname}
+                                    </Button>
+
+                                    <Menu
+                                        open={Boolean(anchor)}
+                                        anchorEl={anchor}
+                                        onClose={closeMenu}
+                                        keepMounted
+                                    >
+                                        {productNames.map((product, index) => (
+                                        <MenuItem
+                                            key={index}
+                                            onClick={(event) => onMenuItemClick(event, index)}
+                                            selected= {index === selected}
+                                        >
+                                            {product.productname}
+                                        </MenuItem>
+                                        ))}
+                                    </Menu>
+                                </Box>
                             </Grid>
                             <Grid item xs={12}>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -130,21 +171,21 @@ export default function CreatePost () {
                                         label= "Date"
                                         inputFormat="MM/DD/YYYY"
                                         placeholder="date"
-                                        value={value}
+                                        value={time}
                                         onChange={handleChange}
                                         renderInput={(params) => <TextField {...params} />}
                                     />   
                                 </LocalizationProvider>          
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField fullWidth multiline value={content} placeholder="Amount " onChange={e => setContent(e.target.value)}/>
+                                <TextField fullWidth multiline value={amount} placeholder="Amount " onChange={e => setAmount(e.target.value)}/>
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField fullWidth multiline value={content} placeholder="Description " onChange={e => setContent(e.target.value)}/>
+                                <TextField fullWidth multiline value={description} placeholder="Description " onChange={e => setDescription(e.target.value)}/>
                             </Grid>
                             <Grid item xs={12}>
                                 {/* onClick = {() => onSendCreatePost()} */}
-                                <Button style = {{marginBottom:"20px" , color:"blue"}} onClick={() => console.log("clicked")} >Submit</Button>
+                                <Button style = {{marginBottom:"20px" , color:"blue"}} onClick={() => checkSelected()} >Submit</Button>
                                 <Typography variant="h5" sx={{color:"red"}}>
                                     {errorMessage}
                                 </Typography>
