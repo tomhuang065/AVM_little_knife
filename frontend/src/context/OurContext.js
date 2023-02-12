@@ -35,8 +35,10 @@ const ChatContext = createContext({
     itemNames:{},
     productNames:{},
     purchaseNames:{},
+    profitNames:{},
     person: {},
     sendGetPurchases:() =>{},
+    sendGetProfits:() =>{},
     DashboardPosts: [],
     currentLocation: '',
     sendGetNotificationPost: () => {},
@@ -76,6 +78,7 @@ const ChatProvider = (props) => {
     const [itemNames, setItemNames] = useState([]);
     const [productNames, setProductNames] = useState([]);
     const [purchaseNames, setPurchaseNames] = useState([]);
+    const [profitNames, setProfitNames] = useState([]);
     const [DashboardPosts, setDashboardPosts] = useState([]);
     const [currentLocation, setCurrentLocation] = useState('');
     const [NotificationPost, setNotificationPost] = useState({});
@@ -143,6 +146,9 @@ const ChatProvider = (props) => {
     const sendGetPurchases = (payload) => {
         sendData(['getPurchases', payload]);
     }
+    const sendGetProfits = (payload) => {
+        sendData(['getProfits', payload]);
+    }
     const sendGetNotificationPost = (_id) => {
         sendData(['getNotificationPost',{_id}])
     }
@@ -164,13 +170,21 @@ const ChatProvider = (props) => {
             case 'getItemName':{
                 console.log(payload.List)
                 setItemNames(payload.List)
+                break;
             }
             case 'getProductName':{
                 console.log(payload.List)
                 setProductNames(payload.List)
+                break;
             }
             case 'getPurchase':{
                 setPurchaseNames(payload.List)
+                break;
+
+            }
+            case 'getProfit':{
+                setProfitNames(payload.List)
+                break;
 
             }
             case "signInStatus": {
@@ -277,6 +291,7 @@ const ChatProvider = (props) => {
                 itemNames,
                 productNames,
                 purchaseNames,
+                profitNames,
                 sendCreateItem,
                 sendUpdateItem,
                 sendDeleteItem,
@@ -288,6 +303,7 @@ const ChatProvider = (props) => {
                 sendCreatePurchase,
                 sendCreateProfit,
                 sendGetPurchases,
+                sendGetProfits,
                 DashboardPosts,
                 setDashboardPosts,
                 currentLocation,setCurrentLocation,

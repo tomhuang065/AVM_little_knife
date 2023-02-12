@@ -135,6 +135,10 @@ const getPurchases = async (payload, ws) =>{
     const purchaseList = await PurchaseModel.find({user: payload.user})
     sendData(['getPurchase', {List:purchaseList}], ws)
 }
+const getProfits = async (payload, ws) =>{
+    const profitList = await ProfitModel.find({user: payload.user})
+    sendData(['getProfit', {List:profitList}], ws)
+}
 const getPostsFromDB = async (payload, ws) => {
     const {sorttype, fromPostNum, theme} = payload;
     const posts = sorttype? 
@@ -266,7 +270,10 @@ export default {
                 case 'getPurchases': {
                     const post = await getPurchases(payload, ws);
                     break;
-
+                }
+                case 'getProfits': {
+                    getProfits(payload, ws);
+                    break;
                 }
                 case 'getNotificationPost': {
                     const Post = await getPostby_id(payload,ws);

@@ -30,7 +30,7 @@ export default function Dashboard (props) {
   const [total, setTotal] = useState(0);
 
 
-  const {sendGetPurchases,  purchaseNames, DashboardPosts,setDashboardPosts ,person, currentLocation,show_number,setShow_number, allTheme,DashPostsIsLoading, cir} = useChat();
+  const {sendGetPurchases,  profitNames, sendGetProfits, purchaseNames,setDashboardPosts ,person, currentLocation,show_number,setShow_number, allTheme,DashPostsIsLoading, cir} = useChat();
   useEffect(()=>{
     if(currentLocation === '/app/statistics'){
       setDashboardPosts([]);
@@ -39,6 +39,7 @@ export default function Dashboard (props) {
           user:person.mail,
       }
       sendGetPurchases(payload);
+      sendGetProfits(payload)
     }
   }, [currentLocation]);
   useEffect(()=>{
@@ -46,7 +47,7 @@ export default function Dashboard (props) {
     if(purchaseNames.length !== 0){
       findTotal();
     }
-  }, [purchaseNames]);
+  }, [purchaseNames, profitNames]);
 
   const findTotal = () => {
     var temp = 0;
@@ -54,6 +55,10 @@ export default function Dashboard (props) {
         temp -= purchaseNames[i].total
             console.log(temp)        
     }
+    for(var i = 0; i < profitNames.length; i ++){
+      temp -= profitNames[i].total
+          console.log(temp)        
+  }
     setNeg(temp)
   }
 //   console.log("get post", DashboardPosts)
@@ -67,7 +72,18 @@ export default function Dashboard (props) {
             {purchaseNames.length !== 0?
                 <div>
                     {purchaseNames.map(purchase =>(
-                        <div>{purchase.item} : {purchase.total}</div>
+                        <div>{purchase.item} : - {purchase.total}</div>
+                    ))}
+                </div>
+                :
+                <div></div>
+            }
+          </Grid>
+          <Grid item xs={12}>
+            {profitNames.length !== 0?
+                <div>
+                    {profitNames.map(profit =>(
+                        <div>{profit.productname} : +{profit.total}</div>
                     ))}
                 </div>
                 :
