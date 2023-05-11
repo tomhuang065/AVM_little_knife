@@ -85,25 +85,14 @@ export default function CreatePost () {
         setSelected(-1);
 
     }
-    function convertToBase64(file) {
-        return new Promise((resolve, reject) => {
-            const fileReader = new FileReader();
-            fileReader.readAsDataURL(file);
-            fileReader.onload = () => {
-                resolve(fileReader.result);
-            };
-            fileReader.onerror = (error) => {
-                reject(error);
-            }
-        })
-    }
+    
     const getAmount = (event) =>{
         setTmpAmount(event.target.value)
     }
     return (
         // <Box>abcd</Box>
         <>
-            <PageTitle title="購原料"/>
+            <PageTitle title="新增費用"/>
             <Paper>
                 <Container sx={{bgcolor: '#edfcfa'}}>
                     <Grid container spacing={4}>

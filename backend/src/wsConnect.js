@@ -139,21 +139,7 @@ const getProfits = async (payload, ws) =>{
     const profitList = await ProfitModel.find({user: payload.user})
     sendData(['getProfit', {List:profitList}], ws)
 }
-const getPostsFromDB = async (payload, ws) => {
-    const {sorttype, fromPostNum, theme} = payload;
-    const posts = sorttype? 
-        (theme===''?
-        await PostModel.find().populate('poster').sort({_id: -1}).skip(fromPostNum).limit(10):
-        await PostModel.find({theme}).populate('poster').sort({_id: -1}).skip(fromPostNum).limit(10))
-        :
-        (theme===''?
-        await PostModel.find().populate('poster').sort({like: -1}).skip(fromPostNum).limit(10):
-        await PostModel.find({theme}).populate('poster').sort({like: -1}).skip(fromPostNum).limit(10));
-    const newPostsCount = posts.length;
-    if(posts){
-        sendData(['dashboardPosts', {posts, newPostsCount}], ws);
-    }
-}
+
 
 const getPostby_id = async (payload,ws) => {
     const {_id} = payload;
